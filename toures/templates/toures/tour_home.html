@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}جستجوی تور - برج سفید{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/style_home.css' %}"> {# اگر CSS جدا داری #}
+{% endblock %}
+
+{% block content %}
+<div class="tour-search-hero">
+    <h1 class="tour-search-title">تورهای رویایی برج سفید</h1>
+    
+    <div class="tour-search-form">
+        <form method="GET" action="{% url 'toures:tour_list' %}">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>مقصد</label>
+                    <input type="text" name="destination" placeholder="مثلاً دبی، استانبول، کیش" value="{{ request.GET.destination }}">
+                </div>
+                <div class="form-group">
+                    <label>تاریخ رفت</label>
+                    <input type="date" name="departure_date" value="{{ request.GET.departure_date }}">
+                </div>
+                <div class="form-group">
+                    <label>تاریخ برگشت (اختیاری)</label>
+                    <input type="date" name="return_date" value="{{ request.GET.return_date }}">
+                </div>
+                <div class="form-group">
+                    <label>تعداد نفرات</label>
+                    <select name="passengers">
+                        <option value="1" {% if request.GET.passengers == "1" %}selected{% endif %}>۱ نفر</option>
+                        <option value="2" {% if request.GET.passengers == "2" %}selected{% endif %}>۲ نفر</option>
+                        <option value="3" {% if request.GET.passengers == "3" %}selected{% endif %}>۳ نفر</option>
+                        <option value="4" {% if request.GET.passengers == "4" %}selected{% endif %}>۴ نفر</option>
+                        <option value="5+" {% if request.GET.passengers == "5+" %}selected{% endif %}>۵ نفر به بالا</option>
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="search-btn">جستجوی تور</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+

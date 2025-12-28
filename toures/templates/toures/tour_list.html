@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load static %}
+{% load tour_filters %}
+
+{% block title %}تورهای برج سفید{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/style_toure_list.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="tours-container">
+    <div class="tours-header">
+        <h1>تورهای برج سفید</h1>
+        <p>بهترین تورهای داخلی و خارجی با بهترین قیمت</p>
+    </div>
+
+    <div class="tours-grid">
+        {% for tour in object_list %}
+        <div class="tour-card">
+            <div class="tour-image">
+                <img src="{{ tour.image.url }}" alt="{{ tour.title }}">
+            </div>
+            <div class="tour-info">
+                <span class="tour-type {% if tour.tour_type == 'internal' %}internal{% else %}external{% endif %}">
+                    {{ tour.get_tour_type_display }}
+                </span>
+                <div class="tour-title">{{ tour.title }}</div>
+                <div class="tour-details">
+                    <span><i class="fas fa-map-marker-alt"></i> {{ tour.destination }}</span>
+                    <span><i class="fas fa-calendar"></i> {{ tour.duration }} روز</span>
+                </div>
+                <div class="tour-price">{{ tour.price_per_person|div:10|intcomma }} تومان</div>
+                <a href="{{ tour.get_absolute_url }}" class="reserve-btn">
+                    مشاهده و رزرو
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <p style="grid-column: 1/-1; text-align: center; color: #666;">تور فعالی موجود نیست.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
