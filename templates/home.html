@@ -1,0 +1,1189 @@
+{% extends "base.html" %}
+{% block title %}برج سفید - رزرو آنلاین بلیط هواپیما{% endblock %}
+{% block extra_css %}
+    <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            
+            body {
+                font-family: 'IRANSans', 'Segoe UI', sans-serif;
+                background-color: #f5f5f5;
+                color: #333;
+                line-height: 1.6;
+            }
+            
+            /* Header و Navigation */
+            header {
+                background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+                color: white;
+                padding: 15px 0;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                position: sticky;
+                top: 0;
+                z-index: 100;
+            }
+            
+            .header-content {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 0 20px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            
+            .logo {
+                font-size: 24px;
+                font-weight: bold;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            
+            nav {
+                display: flex;
+                gap: 30px;
+            }
+            
+            nav a {
+                color: white;
+                text-decoration: none;
+                font-weight: 500;
+                transition: opacity 0.3s;
+            }
+            
+            nav a:hover {
+                opacity: 0.8;
+            }
+            
+            /* Hero Section */
+            .hero {
+                /* background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); */
+                /* color: white;
+                padding: 80px 20px;
+                text-align: center; */
+                /* linear-gradient(rgba(30, 60, 114, 0.75), rgba(42, 82, 152, 0.85)), */
+                background:  
+                    url('../static/images/download.jpeg') center/cover no-repeat;
+                color: white;
+                padding: 120px 20px; /* کمی بیشتر برای پوشش بهتر */
+                text-align: center;
+            }
+            
+            .hero-content {
+                max-width: 1000px;
+                margin: 0 auto;
+            }
+            
+            .hero h1 {
+                font-size: 3em;
+                margin-bottom: 20px;
+                font-weight: bold;
+            }
+            
+            .hero p {
+                font-size: 1.3em;
+                margin-bottom: 40px;
+                opacity: 0.95;
+            }
+            
+            /* Search Box */
+            .search-box {
+                background: white;
+                border-radius: 15px;
+                padding: 30px;
+                max-width: 1000px;
+                margin: -50px auto 0;
+                position: relative;
+                z-index: 10;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            }
+            
+            .search-controls {
+                display: flex;
+                gap: 15px;
+                margin-bottom: 20px;
+                flex-wrap: wrap;
+            }
+            
+            .control-group {
+                display: flex;
+                gap: 15px;
+                flex: 1;
+                min-width: 200px;
+            }
+            
+            .form-group {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                min-width: 150px;
+            }
+            
+            .form-group label {
+                color: #666;
+                font-weight: 600;
+                margin-bottom: 8px;
+                font-size: 0.95em;
+            }
+            
+            .form-group input,
+            .form-group select {
+                padding: 12px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                font-size: 1em;
+                font-family: 'IRANSans', sans-serif;
+            }
+            
+            .form-group input:focus,
+            .form-group select:focus {
+                outline: none;
+                border-color: #2a5298;
+                box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
+            }
+            
+            .trip-type {
+                display: flex;
+                gap: 20px;
+                align-items: flex-end;
+            }
+            
+            .radio-group {
+                display: flex;
+                gap: 20px;
+            }
+            
+            .radio-group label {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                cursor: pointer;
+                margin: 0;
+            }
+            
+            .search-button {
+                background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+                color: white;
+                border: none;
+                padding: 12px 40px;
+                border-radius: 8px;
+                font-size: 1em;
+                font-weight: bold;
+                cursor: pointer;
+                transition: transform 0.3s, box-shadow 0.3s;
+                align-self: flex-end;
+            }
+            
+            .search-button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 20px rgba(42, 82, 152, 0.4);
+            }
+            
+            /* Features Section */
+            .features {
+                max-width: 1200px;
+                margin: 80px auto;
+                padding: 0 20px;
+            }
+            
+            .features-title {
+                text-align: center;
+                font-size: 2em;
+                margin-bottom: 50px;
+                color: #333;
+            }
+            
+            .features-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 30px;
+            }
+            
+            .feature-card {
+                background: white;
+                padding: 30px;
+                border-radius: 12px;
+                text-align: center;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+                transition: transform 0.3s, box-shadow 0.3s;
+            }
+            
+            .feature-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            }
+            
+            .feature-icon {
+                font-size: 3em;
+                color: #2a5298;
+                margin-bottom: 15px;
+            }
+            
+            .feature-card h3 {
+                margin-bottom: 10px;
+                color: #333;
+            }
+            
+            .feature-card p {
+                color: #666;
+                font-size: 0.95em;
+            }
+            
+            /* Stats Section */
+            .stats {
+                background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+                color: white;
+                padding: 60px 20px;
+            }
+            
+            .stats-content {
+                max-width: 1200px;
+                margin: 0 auto;
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 40px;
+                text-align: center;
+            }
+            
+            .stat-item h3 {
+                font-size: 2.5em;
+                margin-bottom: 10px;
+            }
+            
+            .stat-item p {
+                font-size: 1em;
+                opacity: 0.95;
+            }
+            
+            /* Footer */
+            footer {
+                background: #222;
+                color: white;
+                padding: 40px 20px;
+                text-align: center;
+            }
+            
+            .footer-content {
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+            
+            .flights-section {
+                max-width: 1200px;
+                margin: 60px auto;
+                padding: 0 20px;
+            }
+            
+            .flights-title {
+                text-align: center;
+                font-size: 2em;
+                margin-bottom: 30px;
+                color: #333;
+            }
+            
+            .flight-card {
+                background: white;
+                padding: 20px;
+                border-radius: 12px;
+                margin-bottom: 15px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+                transition: transform 0.3s;
+            }
+            
+            .flight-card:hover {
+                transform: translateX(-5px);
+                box-shadow: 0 5px 20px rgba(0,0,0,0.12);
+            }
+            
+            .flight-left {
+                display: flex;
+                align-items: center;
+                gap: 30px;
+                flex: 1;
+            }
+            
+            .flight-time {
+                text-align: center;
+            }
+            
+            .flight-time .time {
+                font-size: 1.5em;
+                font-weight: bold;
+                color: #333;
+            }
+            
+            .flight-route-info {
+                flex: 1;
+            }
+            
+            .flight-route-info .route {
+                font-weight: bold;
+                color: #333;
+                margin-bottom: 5px;
+            }
+            
+            .flight-route-info .details {
+                color: #666;
+                font-size: 0.9em;
+            }
+            
+            .flight-right {
+                text-align: right;
+            }
+            
+            .flight-price {
+                font-size: 1.5em;
+                font-weight: bold;
+                color: #2a5298;
+                margin-bottom: 10px;
+            }
+            
+            .flight-btn {
+                background: #2a5298;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: 600;
+                transition: background 0.3s;
+            }
+            
+            .flight-btn:hover {
+                background: #1e3c72;
+            }
+            
+            .cta-section {
+                background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+                color: white;
+                padding: 60px 20px;
+                text-align: center;
+            }
+            
+            .cta-section h2 {
+                font-size: 2em;
+                margin-bottom: 20px;
+            }
+            
+            .cta-button {
+                background: white;
+                color: #2a5298;
+                border: none;
+                padding: 15px 40px;
+                border-radius: 8px;
+                font-size: 1.1em;
+                font-weight: bold;
+                cursor: pointer;
+                transition: transform 0.3s;
+                margin-top: 20px;
+            }
+            
+            .cta-button:hover {
+                transform: scale(1.05);
+            }
+
+            /* Return Date Field - Hidden by default */
+            #return-date-group {
+                display: none;
+            }
+
+            /* Passenger Dropdown Styles */
+            .passenger-dropdown-container {
+                position: relative;
+                display: inline-block;
+                width: 100%;
+            }
+
+            .passenger-dropdown-button {
+                width: 100%;
+                padding: 12px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                font-size: 1em;
+                font-family: 'IRANSans', sans-serif;
+                background: white;
+                cursor: pointer;
+                text-align: right;
+                color: #666;
+                transition: border-color 0.3s;
+            }
+
+            .passenger-dropdown-button:hover,
+            .passenger-dropdown-button.active {
+                border-color: #2a5298;
+            }
+
+            .passenger-dropdown-menu {
+                display: none;
+                position: absolute;
+                background: white;
+                border: 1px solid #ddd;
+                border-top: none;
+                border-radius: 0 0 8px 8px;
+                width: 100%;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                z-index: 1000;
+                padding: 15px;
+                right: 0;
+                top: 100%;
+            }
+
+            .passenger-dropdown-menu.show {
+                display: block;
+            }
+
+            .passenger-category {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 12px 0;
+                border-bottom: 1px solid #eee;
+            }
+
+            .passenger-category:last-child {
+                border-bottom: none;
+            }
+
+            .passenger-category-name {
+                font-weight: 600;
+                color: #333;
+            }
+
+            .passenger-counter {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                background: #f5f5f5;
+            }
+
+            .counter-btn {
+                width: 30px;
+                height: 30px;
+                border: none;
+                background: white;
+                cursor: pointer;
+                font-weight: bold;
+                color: #2a5298;
+                transition: background 0.3s;
+            }
+
+            .counter-btn:hover {
+                background: #e8e8e8;
+            }
+
+            .counter-value {
+                width: 30px;
+                text-align: center;
+                font-weight: 600;
+                color: #333;
+            }
+
+            /* Auth Modal Styles (improved visibility) */
+            .auth-modal {
+                display: none;
+                position: fixed;
+                z-index: 9999;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0,0,0,0.7);
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+            }
+
+            .auth-modal.show { display: flex; }
+
+            .auth-modal-content {
+                background: #ffffff;
+                padding: 28px 28px 22px 28px;
+                border-radius: 12px;
+                max-width: 480px;
+                width: 100%;
+                box-shadow: 0 20px 50px rgba(0,0,0,0.45);
+                transform: translateY(0);
+                transition: transform 0.25s ease, opacity 0.25s ease;
+                color: #222;
+                border: 1px solid rgba(0,0,0,0.06);
+                max-height: 90vh;
+                overflow: auto;
+            }
+
+            .auth-modal-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 18px;
+            }
+
+            .auth-modal-header h2 { margin:0; color:#111; font-size:1.4rem; font-weight:700; }
+
+            .close-btn { background:none; border:none; font-size:26px; cursor:pointer; color:#666; line-height:1; }
+            .close-btn:hover { color:#222 }
+
+            .auth-form { display:none }
+            .auth-form.active { display:block }
+
+            .form-group {
+                margin-bottom: 18px;
+            }
+            .form-group label {
+                display: block;
+                margin-bottom: 6px;
+                font-weight: 600;
+                color: #333;
+            }
+            .form-group input {
+                width: 100%;
+                padding: 11px;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                font-size: 0.95em;
+                font-family: 'IRANSans', sans-serif;
+                transition: border-color 0.3s;
+            }
+            .form-group input:focus {
+                outline: none;
+                border-color: #2a5298;
+                box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
+            }
+            .submit-btn {
+                width: 100%;
+                padding: 12px;
+                background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+                color: white;
+                border: none;
+                border-radius: 6px;
+                font-size: 1em;
+                font-weight: bold;
+                cursor: pointer;
+                transition: transform 0.3s, box-shadow 0.3s;
+                margin-top: 15px;
+            }
+            .submit-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(42, 82, 152, 0.3);
+            }
+            .toggle-auth-link {
+                text-align: center;
+                margin-top: 20px;
+                color: #666;
+                font-size: 0.9em;
+            }
+            .toggle-auth-link a {
+                color: #2a5298;
+                cursor: pointer;
+                text-decoration: underline;
+            }
+            .toggle-auth-link a:hover {
+                color: #1e3c72;
+                width: 30px;
+                text-align: center;
+                font-weight: 600;
+                color: #333;
+            }
+                
+
+            /* Responsive */
+            @media (max-width: 768px) {
+                .hero h1 {
+                    font-size: 2em;
+                }
+                
+                .search-controls {
+                    flex-direction: column;
+                }
+                
+                .control-group {
+                    flex-direction: column;
+                }
+                
+                .flight-left {
+                    flex-direction: column;
+                    gap: 15px;
+                }
+                
+                .flight-card {
+                    flex-direction: column;
+                    gap: 15px;
+                }
+                
+                nav {
+                    gap: 15px;
+                    font-size: 0.9em;
+                }
+            }
+    </style>
+{% endblock %}
+
+
+{% block content %}
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>رزرو آسان و سریع بلیط هواپیما</h1>
+            <p>بهترین قیمت‌ها و بیشترین تنوع پروازها در یک جا</p>
+        </div>
+    </section>
+    
+    <!-- Search Box -->
+    <section style="padding: 0 20px;">
+        <div class="search-box">
+            <form method="GET" action="{% url 'flights:flights_list' %}" class="search-form" autocomplete="off">
+                <div class="search-controls">
+                    <div class="trip-type">
+                        <div class="radio-group">
+                            <label>
+                                <input type="radio" name="trip" value="oneway" checked onchange="toggleReturnDate()">
+                                یک‌طرفه
+                            </label>
+                            <label>
+                                <input type="radio" name="trip" value="roundtrip" onchange="toggleReturnDate()">
+                                رفت و برگشت
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <div class="form-group">
+                        <label>مبدأ</label>
+                        <input type="text" name="origin" placeholder="شهری را انتخاب کنید" value="{{ request.GET.origin }}" list="cities-datalist">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>مقصد</label>
+                        <input type="text" name="destination" placeholder="شهری را انتخاب کنید" value="{{ request.GET.destination }}" list="cities-datalist">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>تاریخ رفت</label>
+                        <input type="date" name="departure_date" value="{{ request.GET.departure_date }}">
+                    </div>
+
+                    <div class="form-group" id="return-date-group">
+                        <label>تاریخ برگشت</label>
+                        <input type="date" name="return_date" value="{{ request.GET.return_date }}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>تعداد مسافران</label>
+                        <div class="passenger-dropdown-container">
+                            <button type="button" class="passenger-dropdown-button" onclick="togglePassengerMenu(event)">
+                                <span id="passenger-display">۱ بزرگسال</span>
+                            </button>
+                            <div class="passenger-dropdown-menu" id="passenger-menu">
+                                <div class="passenger-category">
+                                    <span class="passenger-category-name">بزرگسال</span>
+                                    <div class="passenger-counter">
+                                        <button type="button" class="counter-btn" onclick="decreasePassenger('adult')">−</button>
+                                        <span class="counter-value" id="adult-count">1</span>
+                                        <button type="button" class="counter-btn" onclick="increasePassenger('adult')">+</button>
+                                    </div>
+                                </div>
+                                
+                                <div class="passenger-category">
+                                    <span class="passenger-category-name">کودک (۲-۱۲ سال)</span>
+                                    <div class="passenger-counter">
+                                        <button type="button" class="counter-btn" onclick="decreasePassenger('child')">−</button>
+                                        <span class="counter-value" id="child-count">0</span>
+                                        <button type="button" class="counter-btn" onclick="increasePassenger('child')">+</button>
+                                    </div>
+                                </div>
+                                
+                                <div class="passenger-category">
+                                    <span class="passenger-category-name">نوزاد (کمتر از ۲ سال)</span>
+                                    <div class="passenger-counter">
+                                        <button type="button" class="counter-btn" onclick="decreasePassenger('infant')">−</button>
+                                        <span class="counter-value" id="infant-count">0</span>
+                                        <button type="button" class="counter-btn" onclick="increasePassenger('infant')">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="adults" id="adults-input" value="1">
+                        <input type="hidden" name="children" id="children-input" value="0">
+                        <input type="hidden" name="infants" id="infants-input" value="0">
+                        <input type="hidden" name="total_passengers" id="total-passengers-input" value="1"> {# اختیاری برای راحتی #}
+                    </div>
+                    <template id="cities-template">
+                        <option value="THR">
+                        <option value="MHD">
+                        <option value="ISF">
+                        <option value="SYZ">
+                        <option value="TBZ">
+                        <option value="KIH">
+                        <option value="QSH">
+                        <option value="AHW">
+                        <option value="RST">
+                        <option value="SAR">
+                        <option value="BND">
+                        <option value="KRM">
+                        <option value="YZD">
+                        <option value="ORH">
+                        <option value="ARD">
+                        <!-- شهرهای بیشتر رو اینجا اضافه کن -->
+                    </template>
+                    <datalist id="cities-datalist">
+                        <option value="THR">
+                        <option value="MHD">
+                        <option value="ISF">
+                    </datalist>
+                    <button type="submit" class="search-button">
+                        <i class="fas fa-search"></i> جستجو
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+    
+    <!-- Features -->
+    <section class="features">
+        <h2 class="features-title">چرا برج سفید؟</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-money-bill-wave"></i>
+                </div>
+                <h3>بهترین قیمت</h3>
+                <p>تضمین ارزان‌ترین قیمت بلیط‌ها در بازار</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <h3>رزرو سریع</h3>
+                <p>فقط چند دقیقه برای رزرو و خرید بلیط</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>ایمن و معتبر</h3>
+                <p>پرداخت محفوظ و حفاظت اطلاعات شما</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <h3>پشتیبانی ۲۴/۷</h3>
+                <p>تیم پشتیبانی آماده کمک در هر زمان</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-redo"></i>
+                </div>
+                <h3>رزرو خودکار</h3>
+                <p>سفارش‌ شامل رزرو خودکار در صورت ظرفیت</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-bell"></i>
+                </div>
+                <h3>اطلاع رسانی</h3>
+                <p>دریافت پیام و اطلاع‌رسانی کاهش قیمت</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Latest Flights -->
+    {% if latest_flights %}
+    <section class="flights-section">
+        <h2 class="flights-title">پروازهای محبوب</h2>
+        {% for flight in latest_flights %}
+        <div class="flight-card">
+            <div class="flight-left">
+                <div class="flight-time">
+                    <div class="time">{{ flight.departure_time|date:"H:i" }}</div>
+                    <div style="color: #666; font-size: 0.9em;">{{ flight.flight_number }}</div>
+                </div>
+                <div class="flight-route-info">
+                    <div class="route">
+                        {{ flight.origin_city }} <i class="fas fa-arrow-left"></i> {{ flight.destination_city }}
+                    </div>
+                    <div class="details">
+                        {{ flight.airline }} | {{ flight.aircraft_type }} | صندلی‌های خالی: {{ flight.available_seats }}
+                    </div>
+                </div>
+            </div>
+            <div class="flight-right">
+                <div class="flight-price">
+                    {{ flight.price_per_seat|floatformat:"0" }} تومان
+                </div>
+                <button class="flight-btn" onclick="window.location.href='{% url 'bookings:create_booking' flight.id %}'">
+                    رزرو کنید
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="{% url 'flights:flights_list' %}" style="background: #2a5298; color: white; padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: 600;">
+                مشاهده تمام پروازها
+            </a>
+        </div>
+    </section>
+    {% endif %}
+    
+    <!-- Stats -->
+    <section class="stats">
+        <div class="stats-content">
+            <div class="stat-item">
+                <h3>۱۰۰+</h3>
+                <p>پرواز روزانه</p>
+            </div>
+            <div class="stat-item">
+                <h3>۵۰,۰۰۰+</h3>
+                <p>مسافر راضی</p>
+            </div>
+            <div class="stat-item">
+                <h3>۲۴/۷</h3>
+                <p>پشتیبانی مشتری</p>
+            </div>
+            <div class="stat-item">
+                <h3>۱۰۰%</h3>
+                <p>ایمن و معتبر</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- CTA -->
+    <section class="cta-section">
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <h2>آماده سفر هستید؟</h2>
+            <p style="margin: 20px 0; font-size: 1.1em;">هماکنون بلیط خود را برای بهترین قیمت رزرو کنید</p>
+            <button class="cta-button" onclick="document.querySelector('.search-box').scrollIntoView({behavior: 'smooth'})">
+                شروع جستجو
+            </button>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+        <!-- Auth Modal -->
+        <div id="auth-modal" class="auth-modal">
+            <div class="auth-modal-content">
+                <div class="auth-modal-header">
+                    <h2 id="auth-title">ورود</h2>
+                    <button class="close-btn" onclick="closeAuthModal()">&times;</button>
+                </div>
+
+                <!-- Login Form -->
+                <form id="login-form" class="auth-form active" method="POST" action="{% url 'accounts:login' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="login-username">نام کاربری یا ایمیل</label>
+                        <input type="text" id="login-username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">رمز عبور</label>
+                        <input type="password" id="login-password" name="password" required>
+                    </div>
+                    <button type="submit" class="submit-btn">ورود</button>
+                    <div class="toggle-auth-link">
+                        هنوز عضو نشده اید؟ <a onclick="toggleAuthForm('signup')">عضویت کنید</a>
+                    </div>
+                </form>
+
+                <!-- Signup Form -->
+                <form id="signup-form" class="auth-form" method="POST" action="{% url 'accounts:signup' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="signup-username">نام کاربری</label>
+                        <input type="text" id="signup-username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-email">ایمیل</label>
+                        <input type="email" id="signup-email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-password">رمز عبور</label>
+                        <input type="password" id="signup-password" name="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-password2">تایید رمز عبور</label>
+                        <input type="password" id="signup-password2" name="password2" required>
+                    </div>
+                    <button type="submit" class="submit-btn">عضویت</button>
+                    <div class="toggle-auth-link">
+                        قبلاً عضو شده اید؟ <a onclick="toggleAuthForm('login')">وارد شوید</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    <footer>
+        <div class="footer-content">
+            <h3>بُرج سفید</h3>
+            <p>بهترین پلتفرم رزرو آنلاین بلیط هواپیما در ایران</p>
+            <p style="margin-top: 20px; opacity: 0.7;">تمام حقوق محفوظ است © 2025</p>
+            <p style="margin-top: 10px; font-size: 0.9em;">
+                تلفن پشتیبانی: ۰۲۱-XXXX XXXX | ایمیل: support@borjsefid.ir
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Auth Modal Functions (top-level)
+        function openAuthModal(form) {
+            const modal = document.getElementById('auth-modal');
+            if (!modal) return;
+            console.log('openAuthModal called:', form);
+            modal.classList.add('show');
+            // inline fallback in case CSS isn't applied or specificity blocks it
+            try {
+                modal.style.display = 'flex';
+                modal.style.alignItems = 'center';
+                modal.style.justifyContent = 'center';
+                modal.style.zIndex = '9999';
+                modal.style.backgroundColor = 'rgba(0,0,0,0.6)';
+                modal.style.position = 'fixed';
+                modal.style.left = '0';
+                modal.style.top = '0';
+                modal.style.width = '100%';
+                modal.style.height = '100%';
+                const content = modal.querySelector('.auth-modal-content');
+                if (content) content.style.display = 'block';
+                if (content) {
+                    content.style.zIndex = '10000';
+                    content.style.visibility = 'visible';
+                    content.style.opacity = '1';
+                    content.style.transform = 'translateY(0)';
+                }
+                console.log('modal computed display after open:', window.getComputedStyle(modal).display, window.getComputedStyle(content).display, window.getComputedStyle(content).visibility, 'modal zIndex=', window.getComputedStyle(modal).zIndex, 'content zIndex=', window.getComputedStyle(content).zIndex);
+            } catch (e) {
+                console.error('error applying inline styles to modal', e);
+            }
+
+            if (form === 'login') {
+                document.getElementById('auth-title').textContent = 'ورود';
+                document.getElementById('login-form').classList.add('active');
+                document.getElementById('signup-form').classList.remove('active');
+            } else {
+                document.getElementById('auth-title').textContent = 'عضویت';
+                document.getElementById('login-form').classList.remove('active');
+                document.getElementById('signup-form').classList.add('active');
+            }
+        }
+
+        function closeAuthModal() {
+            const modal = document.getElementById('auth-modal');
+            if (!modal) return;
+            console.log('closeAuthModal called');
+            modal.classList.remove('show');
+            try {
+                modal.style.display = '';
+                modal.style.zIndex = '';
+                const content = modal.querySelector('.auth-modal-content');
+                if (content) content.style.display = '';
+                console.log('modal computed display after close:', window.getComputedStyle(modal).display);
+            } catch (e) {
+                console.error('error clearing inline styles', e);
+            }
+        }
+
+        function toggleAuthForm(form) {
+            console.log('toggleAuthForm:', form);
+            if (form === 'login') {
+                document.getElementById('auth-title').textContent = 'ورود';
+                document.getElementById('login-form').classList.add('active');
+                document.getElementById('signup-form').classList.remove('active');
+            } else {
+                document.getElementById('auth-title').textContent = 'عضویت';
+                document.getElementById('login-form').classList.remove('active');
+                document.getElementById('signup-form').classList.add('active');
+            }
+        }
+
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('auth-modal');
+            if (modal && event.target === modal) {
+                console.log('clicked outside modal, closing');
+                closeAuthModal();
+            }
+        });
+
+        // Toggle Return Date Field
+        function toggleReturnDate() {
+            const tripRadio = document.querySelector('input[name="trip"]:checked');
+            if (!tripRadio) return;
+            const tripType = tripRadio.value;
+            const returnDateGroup = document.getElementById('return-date-group');
+            if (!returnDateGroup) return;
+            if (tripType === 'roundtrip') {
+                returnDateGroup.style.display = 'flex';
+                returnDateGroup.style.flexDirection = 'column';
+            } else {
+                returnDateGroup.style.display = 'none';
+            }
+        }
+
+        // Passenger Dropdown Functions
+        let passengerCounts = {
+            adult: 1,
+            child: 0,
+            infant: 0
+        };
+
+        function togglePassengerMenu(e) {
+            e.preventDefault();
+            const menu = document.getElementById('passenger-menu');
+            const button = e.target.closest('.passenger-dropdown-button');
+            if (!menu || !button) return;
+            console.log('togglePassengerMenu');
+            menu.classList.toggle('show');
+            button.classList.toggle('active');
+        }
+
+        function increasePassenger(type) {
+            passengerCounts[type]++;
+            updatePassengerDisplay();
+        }
+
+        function decreasePassenger(type) {
+            if (passengerCounts[type] > 0 && !(type === 'adult' && passengerCounts[type] === 1)) {
+                passengerCounts[type]--;
+                updatePassengerDisplay();
+            }
+        }
+
+        function updatePassengerDisplay() {
+            // Update counter displays
+            document.getElementById('adult-count').textContent = passengerCounts.adult;
+            document.getElementById('child-count').textContent = passengerCounts.child;
+            document.getElementById('infant-count').textContent = passengerCounts.infant;
+
+            // Update hidden inputs جداگانه
+            document.getElementById('adults-input').value = passengerCounts.adult;
+            document.getElementById('children-input').value = passengerCounts.child;
+            document.getElementById('infants-input').value = passengerCounts.infant;
+
+            const total = passengerCounts.adult + passengerCounts.child + passengerCounts.infant;
+            document.getElementById('total-passengers-input').value = total;
+
+            // Update display text (دکمه dropdown)
+            const parts = [];
+            if (passengerCounts.adult > 0) parts.push(`${passengerCounts.adult} بزرگسال`);
+            if (passengerCounts.child > 0) parts.push(`${passengerCounts.child} کودک`);
+            if (passengerCounts.infant > 0) parts.push(`${passengerCounts.infant} نوزاد`);
+
+            document.getElementById('passenger-display').textContent = parts.join(' + ') || '۱ بزرگسال';
+        }
+
+
+        // Close passenger dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const container = document.querySelector('.passenger-dropdown-container');
+            if (container && !container.contains(event.target)) {
+                const menu = document.getElementById('passenger-menu');
+                const btn = document.querySelector('.passenger-dropdown-button');
+                if (menu) menu.classList.remove('show');
+                if (btn) btn.classList.remove('active');
+            }
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updatePassengerDisplay();
+            // ensure return date visibility matches selected trip
+            toggleReturnDate();
+
+            // Attach header auth button listeners (if inline handlers failed)
+            const loginBtn = document.getElementById('auth-login-btn');
+            const signupBtn = document.getElementById('auth-signup-btn');
+            if (loginBtn) {
+                console.log('attaching loginBtn listener');
+                loginBtn.addEventListener('click', function(e) { e.preventDefault(); console.log('loginBtn clicked'); openAuthModal('login'); });
+            }
+            if (signupBtn) {
+                console.log('attaching signupBtn listener');
+                signupBtn.addEventListener('click', function(e) { e.preventDefault(); console.log('signupBtn clicked'); openAuthModal('signup'); });
+            }
+        });
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const template = document.getElementById('cities-template');
+            const datalist = document.getElementById('cities-datalist');
+            const inputs = document.querySelectorAll('input[list="cities-datalist"]');
+
+            // شهرهای محبوب پیش‌فرض (همون ۳ تایی که در datalist گذاشتیم)
+            const defaultCities = ['تهران', 'مشهد', 'اصفهان'];
+
+            function updateDatalist(inputValue = '') {
+                const search = inputValue.toLowerCase().trim();
+
+                // اگر چیزی تایپ نشده، فقط ۳ تا پیش‌فرض رو نگه دار
+                if (search === '') {
+                    // فقط ۳ تا اول رو نگه می‌داریم (که قبلاً دستی گذاشتیم)
+                    return;
+                }
+
+                // خالی کردن datalist
+                datalist.innerHTML = '';
+
+                // اضافه کردن ۳ تا پیش‌فرض (برای اولویت)
+                defaultCities.forEach(city => {
+                    datalist.innerHTML += `<option value="${city}">`;
+                });
+
+                let count = 3; // چون ۳ تا پیش‌فرض داریم
+                const allOptions = template.content.cloneNode(true).querySelectorAll('option');
+
+                for (let option of allOptions) {
+                    const value = option.value.toLowerCase();
+                    if (value.includes(search) && !defaultCities.map(c => c.toLowerCase()).includes(value)) {
+                        datalist.appendChild(option.cloneNode(true));
+                        count++;
+                        if (count >= 6) break; // حداکثر ۶ تا نشون بده (۳ محبوب + ۳ فیلتر شده)
+                    }
+                }
+            }
+
+            // وقتی کاربر تایپ می‌کنه
+            inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    updateDatalist(this.value);
+                });
+
+                // وقتی فیلد رو پاک می‌کنه، برگرده به حالت پیش‌فرض
+                input.addEventListener('input', function() {
+                    if (this.value === '') {
+                        // datalist رو به حالت اولیه برمی‌گردونیم (۳ تا محبوب)
+                        datalist.innerHTML = `
+                            <option value="تهران">
+                            <option value="مشهد">
+                            <option value="اصفهان">
+                        `;
+                    }
+                });
+            });
+
+            // وقتی روی فیلد کلیک می‌کنه و خالیه، مطمئن می‌شیم لیست باز بمونه
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    if (this.value === '') {
+                        this.click(); // شبیه‌سازی کلیک برای باز کردن لیست در بعضی مرورگرها
+                    }
+                });
+            });
+        });
+
+        document.querySelector('input[name="departure_date"]').valueAsDate = new Date();
+    </script>
+
+{% endblock %}
+

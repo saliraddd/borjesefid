@@ -1,0 +1,74 @@
+<!-- <a href="{% url 'bookings:create_booking' flight.pk %}" class="select-btn">
+                            رزرو این پرواز
+                        </a> -->
+
+                        
+
+
+
+<div class="flight-price-section">
+                        <!-- <div class="price-big">{{ flight.price_per_seat|floatformat:"0"|intcomma }} تومان</div> -->
+                        <div class="price-big">
+                            {{ flight.price_per_seat|multiply:total_passengers|floatformat:"0"|intcomma }} تومان
+                            <small style="display: block; font-size: 0.7em; color: #666; margin-top: 8px;">
+                                برای {{ total_passengers }} مسافر
+                            </small>
+                        </div>
+                        <div class="seats-left {% if flight.available_seats <= 5 %}warning{% endif %}">
+                            {% if flight.available_seats > 0 %}
+                                {{ flight.available_seats }} صندلی باقی مانده
+                            {% else %}
+                                ظرفیت تکمیل شده
+                            {% endif %}
+                        </div>
+                        <a href="https://sepehr360.ir/Flight/B2b/Search?origin=THR,IKA,PYK&destination=KIH" target="_blank" class="select-btn">
+                            رزرو از سپهر ۳۶۰
+                        </a>
+                        <small style="display: block; margin-top: 10px; color: #666;">
+                            (رزرو مستقیم در سایت سپهر ۳۶۰)
+                        </small>
+                    </div>
+
+
+
+
+<li><strong>شماره پرواز:</strong> {{ flight.flight_number }}</li>
+                            <li><strong>ایرلاین:</strong> {{ flight.airline }}</li>
+                            <li><strong>نوع هواپیما:</strong> {{ flight.aircraft_type }}</li>
+                            <li><strong>زمان حرکت:</strong> {{ flight.departure_time|date:"Y/m/d H:i" }} از {{ flight.origin_city }}</li>
+                            <li><strong>زمان رسیدن:</strong> {{ flight.arrival_time|date:"Y/m/d H:i" }} به {{ flight.destination_city }}</li>
+                            <li><strong>کلاس پرواز:</strong> اکونومی</li>
+                            <li><strong>نوع بلیط:</strong> چارتری</li>
+
+
+
+
+
+<script>
+    function toggleTab(event, tabId) {
+        const tab = event.currentTarget;
+        const content = document.getElementById(tabId);
+        const card = tab.closest('.flight-card');
+
+        // پیدا کردن همه تب‌ها و محتواها در همین کارت
+        const allTabs = card.querySelectorAll('.tab');
+        const allContents = card.querySelectorAll('.tab-content');
+
+        // اگر این تب فعال بود، همه رو ببند
+        if (tab.classList.contains('active')) {
+            allTabs.forEach(t => t.classList.remove('active'));
+            allContents.forEach(c => c.classList.remove('open'));
+            return;
+        }
+
+        // بستن همه
+        allTabs.forEach(t => t.classList.remove('active'));
+        allContents.forEach(c => c.classList.remove('open'));
+
+        // باز کردن تب کلیک شده
+        tab.classList.add('active');
+        content.classList.add('open');
+    }
+</script>
+
+

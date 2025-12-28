@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}برج سفید - رزرو پرواز{% endblock %}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'IRANSans', 'Segoe UI', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: white;
+        }
+        
+        nav {
+            display: flex;
+            gap: 30px;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.3s;
+        }
+        
+        nav a:hover {
+            opacity: 0.8;
+        }
+        
+        /* Main Content */
+        main {
+            min-height: calc(100vh - 200px);
+        }
+        
+        /* Footer */
+        footer {
+            background: #222;
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* Alerts */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #f5c6cb;
+        }
+        
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left: 4px solid #17a2b8;
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                gap: 15px;
+                font-size: 0.9em;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <a href="{% url 'flights:home' %}" class="logo">
+                <i class="fas fa-plane"></i>
+                برج سفید
+            </a>
+            <nav>
+                <a href="{% url 'flights:home' %}">صفحه اصلی</a>
+                {% if user.is_authenticated %}
+                <a href="{% url 'accounts:dashboard' %}">داشبورد</a>
+                <span style="color: #fff; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-user-circle"></i>
+                    {{ user.username }}
+                </span>
+                <a href="{% url 'accounts:logout' %}" style="background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 6px;">خروج</a>
+                {% else %}
+                <a id="auth-login-btn" href="javascript:void(0)" style="background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 6px;">ورود</a>
+                <a id="auth-signup-btn" href="javascript:void(0)" style="background: rgba(255,255,255,0.3); padding: 8px 16px; border-radius: 6px;">عضویت</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <h3>🛫 برج سفید</h3>
+            <p>بهترین پلتفرم رزرو آنلاین بلیط هواپیما</p>
+            <p style="margin-top: 20px; opacity: 0.7;">تمام حقوق محفوظ است © 2025</p>
+            <p style="margin-top: 10px; font-size: 0.9em;">
+                ✉️ support@borjsefid.ir
+            </p>
+        </div>
+    </footer>
+</body>
+</html>

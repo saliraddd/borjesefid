@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+{% load utils %} {# برای pagination هوشمند #}
+{% load humanize %} {# برای timeuntil اگر خواستی #}
+{% load static %}
+
+{% block title %}نتایج جستجوی پرواز - برج سفید{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="{% static 'css/flights.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="results-container">
+    <div class="results-header">
+        <h1>نتایج جستجوی پرواز</h1>
+        <p>
+            از {{ request.GET.origin|default:"هر شهری" }} به {{ request.GET.destination|default:"هر شهری" }}
+            {% if request.GET.departure_date %} - {{ request.GET.departure_date|date:"d F Y" }}{% endif %}
+        </p>
+    </div>
+
+    {% if object_list %}
+        {% for flight in object_list %}
+            <div class="flight-card">
+                <div class="flight-header">
+                    <!-- بخش اصلی پرواز -->
+                    <div class="flight-details-section">
+                        <div class="airline-logo">
+                            <img src="https://cdn.alibaba.ir/static/img/airlines/Domestic/{{ flight.airline|slice:":2"|upper }}.png" 
+                                alt="{{ flight.airline }}" onerror="this.style.display='none'">
+                        </div>
+
+                        <div class="flight-times">
+                            <div class="time-block">
+                                <div class="time-big">{{ flight.departure_time|date:"H:i" }}</div>
+                                <div class="city-name">{{ flight.origin_city }}</div>
+                            </div>
+
+                            <div class="duration-arrow">
+                                <i class="fas fa-plane"></i>
+                                <div class="duration-text">
+                                    مدت پرواز: حدود ۱ ساعت و ۳۰ دقیقه {# بعداً داینامیک می‌کنیم #}
+                                </div>
+                            </div>
+
+                            <div class="time-block">
+                                <div class="time-big">{{ flight.arrival_time|date:"H:i" }}</div>
+                                <div class="city-name">{{ flight.destination_city }}</div>
+                            </div>
+                        </div>
+
+                        <div class="flight-tags-container">
+                            <div class="flight-tags">
+                                <span class="tag">چارتری</span>
+                                <span class="tag">اکونومی</span>
+                                <span class="tag">{{ flight.aircraft_type }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- بخش قیمت و دکمه رزرو -->
+                    <div class="flight-price-section">
+                        <div class="price-big">
+                            {{ flight.price_per_seat|multiply:total_passengers|intcomma }} تومان
+                            <small style="display: block; font-size: 0.7em; color: #666; margin-top: 8px;">
+                                برای {{ total_passengers }} مسافر
+                                {% if not flight.is_internal %}
+                                    <br><span style="color: #e67e22;">(از سپهر ۳۶۰)</span>
+                                {% endif %}
+                            </small>
+                        </div>
+                        <div class="seats-left {% if flight.available_seats <= 5 %}warning{% endif %}">
+                            {{ flight.available_seats }} صندلی باقی مانده
+                        </div>
+
+                        {% if flight.is_internal %}
+                            <a href="{% url 'bookings:create_booking' flight.id %}" class="select-btn">
+                                رزرو این پرواز
+                            </a>
+                        {% else %}
+                            <a href="https://sepehr360.ir" target="_blank" class="select-btn" style="background: #e67e22;">
+                                رزرو در سپهر ۳۶۰
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- تب‌های کشویی -->
+                <div class="tabs">
+                    <div class="tab" onclick="toggleTab(event, 'flight-info-{{ forloop.counter }}')">
+                        اطلاعات پرواز <i class="fas fa-chevron-down tab-icon"></i>
+                    </div>
+                    <div class="tab" onclick="toggleTab(event, 'rules-{{ forloop.counter }}')">
+                        قوانین استرداد <i class="fas fa-chevron-down tab-icon"></i>
+                    </div>
+                    <div class="tab" onclick="toggleTab(event, 'baggage-{{ forloop.counter }}')">
+                        بار مجاز <i class="fas fa-chevron-down tab-icon"></i>
+                    </div>
+                </div>
+
+                <!-- محتوای کشویی -->
+                <div id="flight-info-{{ forloop.counter }}" class="tab-content">
+                    <div class="tab-panel">
+                        <ul>
+                            <li><strong>شماره پرواز:</strong> {{ flight.flight_number }}</li>
+                            <li><strong>ایرلاین:</strong> {{ flight.airline }}</li>
+                            <li><strong>نوع هواپیما:</strong> {{ flight.aircraft_type|default:"نامشخص" }}</li>
+                            <li><strong>زمان حرکت:</strong> {{ flight.departure_time }}</li>
+                            <li><strong>زمان رسیدن:</strong> {{ flight.arrival_time|default:"نامشخص" }}</li>
+                            <li><strong>کلاس پرواز:</strong> {{ flight.class_type|default:"اکونومی" }}</li>
+                            <li><strong>منبع:</strong> {% if flight.is_internal %}داخلی{% else %}سپهر ۳۶۰{% endif %}</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="rules-{{ forloop.counter }}" class="tab-content">
+                    <div class="tab-panel">
+                        <p>قوانین استرداد بسته به ایرلاین متفاوت است. معمولاً:</p>
+                        <ul>
+                            <li>تا ۲۴ ساعت قبل: جریمه ۳۰٪</li>
+                            <li>تا ۴ ساعت قبل: جریمه ۵۰٪</li>
+                            <li>کمتر از ۴ ساعت: غیرقابل استرداد</li>
+                        </ul>
+                        <p style="margin-top: 10px; color: #e74c3c;">برای جزئیات دقیق با پشتیبانی تماس بگیرید.</p>
+                    </div>
+                </div>
+
+                <div id="baggage-{{ forloop.counter }}" class="tab-content">
+                    <div class="tab-panel">
+                        <p><strong>بار مجاز:</strong></p>
+                        <ul>
+                            <li>بار دستی: ۷ کیلوگرم (ابعاد حداکثر ۵۵×۴۰×۲۰ سانتی‌متر)</li>
+                            <li>بار داخل انبار: ۲۰ کیلوگرم</li>
+                            <li>بار اضافی: هر کیلو ۰.۵٪ قیمت بلیط</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        {% endfor %}
+
+        <!-- Pagination -->
+        <div style="text-align: center; margin: 50px 0;">
+            {% if page_obj.has_previous %}
+                <a href="?{% query_transform page=page_obj.previous_page_number %}" class="select-btn" style="margin: 0 10px; padding: 12px 30px;">قبلی</a>
+            {% endif %}
+            <span style="font-size: 1.2em; color: #666; margin: 0 20px;">
+                صفحه {{ page_obj.number }} از {{ page_obj.paginator.num_pages }}
+            </span>
+            {% if page_obj.has_next %}
+                <a href="?{% query_transform page=page_obj.next_page_number %}" class="select-btn" style="margin: 0 10px; padding: 12px 30px;">بعدی</a>
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="no-results">
+            <i class="fas fa-plane-slash"></i>
+            <h2>پروازی با این مشخصات یافت نشد</h2>
+            <p>لطفاً تاریخ یا شهرها را تغییر دهید و دوباره جستجو کنید.</p>
+            <a href="{% url 'flights:home' %}" class="select-btn" style="margin-top: 20px; padding: 14px 40px; display: inline-block;">
+                جستجوی دوباره
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+    function toggleTab(event, tabId) {
+        const tab = event.currentTarget;
+        const content = document.getElementById(tabId);
+        const card = tab.closest('.flight-card');
+
+        // همه تب‌ها و محتواها در همین کارت
+        const allTabs = card.querySelectorAll('.tab');
+        const allContents = card.querySelectorAll('.tab-content');
+
+        // اگر این تب فعال بود، ببند
+        if (tab.classList.contains('active')) {
+            tab.classList.remove('active');
+            content.classList.remove('open');
+            return;
+        }
+
+        // بستن همه
+        allTabs.forEach(t => t.classList.remove('active'));
+        allContents.forEach(c => c.classList.remove('open'));
+
+        // باز کردن تب کلیک شده
+        tab.classList.add('active');
+        content.classList.add('open');
+    }
+</script>
+
+{% endblock %}
+
+
+

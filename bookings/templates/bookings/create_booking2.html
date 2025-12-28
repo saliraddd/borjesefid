@@ -1,0 +1,303 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}رزرو پرواز - برج سفید{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/flights.css' %}"> {# اگر CSS مشترک داری #}
+<style>
+    .booking-container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+    .booking-header {
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        color: white;
+        padding: 40px;
+        border-radius: 16px;
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    .booking-header h1 { font-size: 2.5em; margin-bottom: 15px; }
+    .flight-summary {
+        background: white;
+        padding: 25px;
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        margin-bottom: 40px;
+    }
+    .flight-summary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        text-align: center;
+    }
+    .summary-item strong { display: block; font-size: 1.4em; margin-bottom: 8px; color: #2a5298; }
+
+    .passenger-selection {
+        background: white;
+        padding: 30px;
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        margin-bottom: 40px;
+    }
+    .passenger-counter {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid #eee;
+    }
+    .counter-controls {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    .counter-btn {
+        width: 40px;
+        height: 40px;
+        border: 2px solid #2a5298;
+        border-radius: 50%;
+        background: white;
+        color: #2a5298;
+        font-size: 1.5em;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    .counter-btn:hover {
+        background: #2a5298;
+        color: white;
+    }
+    .counter-value {
+        font-size: 1.8em;
+        font-weight: bold;
+        min-width: 60px;
+        text-align: center;
+    }
+
+    .passengers-form {
+        background: white;
+        padding: 30px;
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        margin-bottom: 40px;
+    }
+    .passenger-form {
+        border: 1px solid #eee;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+    .passenger-title {
+        font-size: 1.3em;
+        font-weight: bold;
+        color: #2a5298;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #2a5298;
+    }
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #333;
+    }
+    .form-group input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1em;
+    }
+
+    .price-summary {
+        background: #f0f8ff;
+        padding: 30px;
+        border-radius: 16px;
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    .total-price {
+        font-size: 2.5em;
+        font-weight: bold;
+        color: #2a5298;
+        margin: 20px 0;
+    }
+
+    .continue-btn {
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        color: white;
+        border: none;
+        padding: 18px 50px;
+        border-radius: 12px;
+        font-size: 1.4em;
+        font-weight: bold;
+        cursor: pointer;
+        width: 100%;
+        transition: all 0.3s;
+    }
+    .continue-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 30px rgba(42,82,152,0.3);
+    }
+
+    @media (max-width: 768px) {
+        .form-grid { grid-template-columns: 1fr; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="booking-container">
+    <div class="booking-header">
+        <h1>رزرو پرواز</h1>
+        <p>لطفاً اطلاعات مسافران را وارد کنید</p>
+    </div>
+
+    <!-- خلاصه پرواز -->
+    <div class="flight-summary">
+        <div class="flight-summary-grid">
+            <div class="summary-item">
+                <strong>{{ flight.origin_city }} → {{ flight.destination_city }}</strong>
+                <span>{{ flight.departure_time|date:"d F Y" }} ساعت {{ flight.departure_time|date:"H:i" }}</span>
+            </div>
+            <div class="summary-item">
+                <strong>{{ flight.airline }}</strong>
+                <span>پرواز {{ flight.flight_number }}</span>
+            </div>
+            <div class="summary-item">
+                <strong>{{ flight.price_per_seat|floatformat:"0"|intcomma }} تومان</strong>
+                <span>قیمت هر نفر</span>
+            </div>
+            <div class="summary-item">
+                <strong>{{ flight.available_seats }} صندلی</strong>
+                <span>موجود</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- انتخاب تعداد مسافر -->
+    <div class="passenger-selection">
+        <h2 style="margin-bottom: 30px; color: #2a5298;">تعداد مسافران</h2>
+        <div class="passenger-counter">
+            <span>بزرگسال (۱۲ سال به بالا)</span>
+            <div class="counter-controls">
+                <button type="button" class="counter-btn" onclick="changePassenger('adult', -1)">−</button>
+                <div class="counter-value" id="adult-count">1</div>
+                <button type="button" class="counter-btn" onclick="changePassenger('adult', 1)">+</button>
+            </div>
+        </div>
+        <div class="passenger-counter">
+            <span>کودک (۲-۱۲ سال)</span>
+            <div class="counter-controls">
+                <button type="button" class="counter-btn" onclick="changePassenger('child', -1)">−</button>
+                <div class="counter-value" id="child-count">0</div>
+                <button type="button" class="counter-btn" onclick="changePassenger('child', 1)">+</button>
+            </div>
+        </div>
+        <div class="passenger-counter">
+            <span>نوزاد (کمتر از ۲ سال)</span>
+            <div class="counter-controls">
+                <button type="button" class="counter-btn" onclick="changePassenger('infant', -1)">−</button>
+                <div class="counter-value" id="infant-count">0</div>
+                <button type="button" class="counter-btn" onclick="changePassenger('infant', 1)">+</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- فرم اطلاعات مسافران -->
+    <form method="POST" action="{% url 'bookings:create_booking' flight.pk %}">
+        {% csrf_token %}
+        <div class="passengers-form" id="passengers-forms">
+            <!-- فرم‌ها داینامیک با JS اضافه می‌شن -->
+            <div class="passenger-form" id="passenger-template" style="display: none;">
+                <div class="passenger-title">مسافر <span class="passenger-number">1</span> - بزرگسال</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>نام</label>
+                        <input type="text" name="first_name[]" required>
+                    </div>
+                    <div class="form-group">
+                        <label>نام خانوادگی</label>
+                        <input type="text" name="last_name[]" required>
+                    </div>
+                    <div class="form-group">
+                        <label>کد ملی</label>
+                        <input type="text" name="national_id[]" maxlength="10" required>
+                    </div>
+                    <div class="form-group">
+                        <label>تاریخ تولد</label>
+                        <input type="date" name="birth_date[]" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- خلاصه قیمت -->
+        <div class="price-summary">
+            <p>قیمت کل (برای <span id="total-passengers">1</span> مسافر)</p>
+            <div class="total-price" id="total-price">{{ flight.price_per_seat|floatformat:"0"|intcomma }} تومان</div>
+        </div>
+
+        <button type="submit" class="continue-btn">ادامه به پرداخت</button>
+    </form>
+</div>
+
+<script>
+let passengers = { adult: 1, child: 0, infant: 0 };
+
+function changePassenger(type, delta) {
+    if (type === 'adult' && passengers.adult + delta < 1) return;
+    if (passengers[type] + delta < 0) return;
+
+    passengers[type] += delta;
+    document.getElementById(type + '-count').textContent = passengers[type];
+
+    updatePassengersForm();
+    updateTotalPrice();
+}
+
+function updatePassengersForm() {
+    const container = document.getElementById('passengers-forms');
+    container.innerHTML = '';
+
+    let index = 1;
+    ['adult', 'child', 'infant'].forEach(type => {
+        for (let i = 0; i < passengers[type]; i++) {
+            const template = document.getElementById('passenger-template');
+            const clone = template.cloneNode(true);
+            clone.style.display = 'block';
+            clone.id = '';
+
+            const title = clone.querySelector('.passenger-title');
+            const numSpan = title.querySelector('.passenger-number');
+            numSpan.textContent = index;
+
+            let typeFa = 'بزرگسال';
+            if (type === 'child') typeFa = 'کودک';
+            if (type === 'infant') typeFa = 'نوزاد';
+            title.innerHTML += ` - ${typeFa}`;
+
+            container.appendChild(clone);
+            index++;
+        }
+    });
+
+    document.getElementById('total-passengers').textContent = index - 1;
+}
+
+function updateTotalPrice() {
+    const totalPassengers = passengers.adult + passengers.child + passengers.infant;
+    const pricePerSeat = {{ flight.price_per_seat }};
+    const total = totalPassengers * pricePerSeat;
+    document.getElementById('total-price').textContent = total.toLocaleString() + ' تومان';
+}
+
+// اولیه
+updatePassengersForm();
+updateTotalPrice();
+</script>
+{% endblock %}

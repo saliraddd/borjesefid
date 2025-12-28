@@ -1,0 +1,2 @@
+Django
+Pillow==12.0.0

@@ -1,0 +1,25 @@
+<svg width="400" height="150" viewBox="0 0 400 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- خط‌های راه -->
+  <line x1="20" y1="130" x2="380" y2="130" stroke="#ddd" stroke-width="8" stroke-dasharray="20,20"/>
+  
+  <!-- اتوبوس -->
+  <rect x="40" y="40" width="180" height="50" rx="10" fill="#e74c3c" stroke="#2a5298" stroke-width="2"/>
+  
+  <!-- پنجره‌ها -->
+  <rect x="55" y="50" width="20" height="18" fill="#87ceeb"/>
+  <rect x="80" y="50" width="20" height="18" fill="#87ceeb"/>
+  <rect x="105" y="50" width="20" height="18" fill="#87ceeb"/>
+  <rect x="130" y="50" width="20" height="18" fill="#87ceeb"/>
+  <rect x="155" y="50" width="20" height="18" fill="#87ceeb"/>
+  <rect x="180" y="50" width="20" height="18" fill="#87ceeb"/>
+  
+  <!-- درب -->
+  <rect x="210" y="50" width="8" height="30" fill="#333"/>
+  
+  <!-- چرخ‌ها -->
+  <circle cx="70" cy="100" r="8" fill="#333"/>
+  <circle cx="70" cy="100" r="5" fill="#666"/>
+  
+  <circle cx="190" cy="100" r="8" fill="#333"/>
+  <circle cx="190" cy="100" r="5" fill="#666"/>
+</svg>

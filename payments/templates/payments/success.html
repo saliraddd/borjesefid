@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container text-center py-5">
+    <i class="fas fa-check-circle" style="font-size: 5em; color: green;"></i>
+    <h1>پرداخت با موفقیت انجام شد!</h1>
+    <p>کد پیگیری: {{ ref_id }}</p>
+    <a href="{% url 'bookings:booking_detail' booking.pk %}" class="select-btn">مشاهده رزرو</a>
+</div>
+{% endblock %}
+

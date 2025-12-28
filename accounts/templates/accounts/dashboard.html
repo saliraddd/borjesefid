@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+
+{% block title %}داشبورد کاربری - بُرج سفید{% endblock %}
+
+{% block content %}
+<div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+    <!-- Dashboard Header -->
+    <div style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; padding: 25px; border-radius: 12px; margin-bottom: 30px;">
+        <h1 style="margin: 0 0 10px 0; font-size: 2em;">داشبورد کاربری</h1>
+        <p style="margin: 0; opacity: 0.9;">خوش‌آمدید، {{ user.first_name|default:user.username }}</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 250px 1fr; gap: 20px;">
+        <!-- Sidebar Menu -->
+        <div style="background: white; border-radius: 12px; padding: 0; box-shadow: 0 3px 10px rgba(0,0,0,0.08); height: fit-content;">
+            <div style="border-bottom: 1px solid #eee; padding: 0;">
+                <a href="{% url 'accounts:dashboard' %}" style="display: block; padding: 16px 20px; text-decoration: none; color: #333; border-left: 4px solid {% if page == 'dashboard' or not page %}#2a5298{% else %}transparent{% endif %}; background: {% if page == 'dashboard' or not page %}#f0f4ff{% else %}white{% endif %}; font-weight: 600; transition: all 0.3s;">
+                    <i class="fas fa-home" style="margin-left: 10px;"></i> خانه
+                </a>
+                <a href="{% url 'accounts:profile' %}" style="display: block; padding: 16px 20px; text-decoration: none; color: #333; border-left: 4px solid {% if page == 'profile' %}#2a5298{% else %}transparent{% endif %}; background: {% if page == 'profile' %}#f0f4ff{% else %}white{% endif %}; font-weight: 500; transition: all 0.3s; border-top: 1px solid #eee;">
+                    <i class="fas fa-user" style="margin-left: 10px;"></i> مشخصات
+                </a>
+                <a href="{% url 'accounts:transactions' %}" style="display: block; padding: 16px 20px; text-decoration: none; color: #333; border-left: 4px solid {% if page == 'transactions' %}#2a5298{% else %}transparent{% endif %}; background: {% if page == 'transactions' %}#f0f4ff{% else %}white{% endif %}; font-weight: 500; transition: all 0.3s; border-top: 1px solid #eee;">
+                    <i class="fas fa-history" style="margin-left: 10px;"></i> تراکنش‌ها
+                </a>
+                <a href="{% url 'accounts:charge' %}" style="display: block; padding: 16px 20px; text-decoration: none; color: #333; border-left: 4px solid {% if page == 'charge' %}#2a5298{% else %}transparent{% endif %}; background: {% if page == 'charge' %}#f0f4ff{% else %}white{% endif %}; font-weight: 500; transition: all 0.3s; border-top: 1px solid #eee;">
+                    <i class="fas fa-plus-circle" style="margin-left: 10px;"></i> افزایش اعتبار
+                </a>
+                <a href="{% url 'accounts:withdrawal' %}" style="display: block; padding: 16px 20px; text-decoration: none; color: #333; border-left: 4px solid {% if page == 'withdrawal' %}#2a5298{% else %}transparent{% endif %}; background: {% if page == 'withdrawal' %}#f0f4ff{% else %}white{% endif %}; font-weight: 500; transition: all 0.3s; border-top: 1px solid #eee;">
+                    <i class="fas fa-wallet" style="margin-left: 10px;"></i> برداشت
+                </a>
+                <a href="{% url 'accounts:bookings' %}" style="display: block; padding: 16px 20px; text-decoration: none; color: #333; border-left: 4px solid {% if page == 'bookings' %}#2a5298{% else %}transparent{% endif %}; background: {% if page == 'bookings' %}#f0f4ff{% else %}white{% endif %}; font-weight: 500; transition: all 0.3s; border-top: 1px solid #eee;">
+                    <i class="fas fa-plane-departure" style="margin-left: 10px;"></i> رزروهای من
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div>
+            {% if page == 'profile' or page == 'dashboard' or not page %}
+                <!-- Profile Section -->
+                {% if not page %}
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                        <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 3px 10px rgba(0,0,0,0.08);">
+                            <div style="color: #2a5298; font-size: 2em; margin-bottom: 10px;"><i class="fas fa-wallet"></i></div>
+                            <p style="color: #666; margin: 0 0 10px 0; font-size: 0.9em;">موجودی</p>
+                            <h3 style="margin: 0; font-size: 1.8em; color: #333;">{{ wallet.balance }} تومان</h3>
+                        </div>
+                        <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 3px 10px rgba(0,0,0,0.08);">
+                            <div style="color: #27ae60; font-size: 2em; margin-bottom: 10px;"><i class="fas fa-arrow-up"></i></div>
+                            <p style="color: #666; margin: 0 0 10px 0; font-size: 0.9em;">کل شارژ‌شده</p>
+                            <h3 style="margin: 0; font-size: 1.8em; color: #333;">{{ wallet.total_charged }} تومان</h3>
+                        </div>
+                        <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 3px 10px rgba(0,0,0,0.08);">
+                            <div style="color: #e74c3c; font-size: 2em; margin-bottom: 10px;"><i class="fas fa-arrow-down"></i></div>
+                            <p style="color: #666; margin: 0 0 10px 0; font-size: 0.9em;">کل خرج‌شده</p>
+                            <h3 style="margin: 0; font-size: 1.8em; color: #333;">{{ wallet.total_spent }} تومان</h3>
+                        </div>
+                        <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 3px 10px rgba(0,0,0,0.08);">
+                            <div style="color: #3498db; font-size: 2em; margin-bottom: 10px;"><i class="fas fa-plane"></i></div>
+                            <p style="color: #666; margin: 0 0 10px 0; font-size: 0.9em;">رزروهای من</p>
+                            <h3 style="margin: 0; font-size: 1.8em; color: #333;">{{ total_bookings }}</h3>
+                        </div>
+                    </div>
+
+                    <!-- Recent Transactions -->
+                    <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 3px 10px rgba(0,0,0,0.08); margin-bottom: 30px;">
+                        <h3 style="margin: 0 0 20px 0; color: #333;">آخرین تراکنش‌ها</h3>
+                        {% if transactions %}
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="background: #f5f5f5;">
+                                        <th style="padding: 12px; text-align: right; color: #666; font-weight: 600; border-bottom: 1px solid #ddd;">نوع</th>
+                                        <th style="padding: 12px; text-align: right; color: #666; font-weight: 600; border-bottom: 1px solid #ddd;">مبلغ</th>
+                                        <th style="padding: 12px; text-align: right; color: #666; font-weight: 600; border-bottom: 1px solid #ddd;">وضعیت</th>
+                                        <th style="padding: 12px; text-align: right; color: #666; font-weight: 600; border-bottom: 1px solid #ddd;">تاریخ</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for transaction in transactions %}
+                                        <tr style="border-bottom: 1px solid #eee;">
+                                            <td style="padding: 12px; text-align: right; color: #333;">{{ transaction.get_transaction_type_display }}</td>
+                                            <td style="padding: 12px; text-align: right; color: #2a5298; font-weight: 600;">{{ transaction.amount }} تومان</td>
+                                            <td style="padding: 12px; text-align: right;">
+                                                <span style="background: {% if transaction.status == 'completed' %}#d4edda{% elif transaction.status == 'pending' %}#fff3cd{% else %}#f8d7da{% endif %}; color: {% if transaction.status == 'completed' %}#155724{% elif transaction.status == 'pending' %}#856404{% else %}#721c24{% endif %}; padding: 6px 12px; border-radius: 6px; font-size: 0.85em;">
+                                                    {{ transaction.get_status_display }}
+                                                </span>
+                                            </td>
+                                            <td style="padding: 12px; text-align: right; color: #666; font-size: 0.9em;">{{ transaction.created_at|date:"Y-m-d H:i" }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        {% else %}
+                            <p style="color: #999; text-align: center; margin: 20px 0;">هنوز تراکنشی انجام نشده است</p>
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+                <!-- Profile Information -->
+                <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 3px 10px rgba(0,0,0,0.08);">
+                    <h3 style="margin: 0 0 20px 0; color: #333;">مشخصات کاربری</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                        <div>
+                            <label style="display: block; color: #666; font-weight: 600; margin-bottom: 8px;">نام و نام‌خانوادگی</label>
+                            <p style="margin: 0; color: #333;">{{ user.first_name|default:"تعیین نشده" }} {{ user.last_name|default:"" }}</p>
+                        </div>
+                        <div>
+                            <label style="display: block; color: #666; font-weight: 600; margin-bottom: 8px;">نام کاربری</label>
+                            <p style="margin: 0; color: #333;">{{ user.username }}</p>
+                        </div>
+                        <div>
+                            <label style="display: block; color: #666; font-weight: 600; margin-bottom: 8px;">ایمیل</label>
+                            <p style="margin: 0; color: #333;">{{ user.email|default:"تعیین نشده" }}</p>
+                        </div>
+                    </div>
+                </div>
+
+            {% elif page == 'transactions' %}
+                <!-- Transactions Page -->
+                <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 3px 10px rgba(0,0,0,0.08);">
+                    <h2 style="margin: 0 0 20px 0; color: #333;">تراکنش‌های من</h2>
+                    {% if transactions %}
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: #f5f5f5;">
+                                    <th style="padding: 12px; text-align: right; color: #666; font-weight: 600; border-bottom: 1px solid #ddd;">نوع</th>
+                                    <th style="padding: 12px; text-align: right; color: #666; font-weight: 600; border-bottom: 1px solid #ddd;">مبلغ</th>
+                                    <th style="padding: 12px; text-align: right; color: #666; font-weight: 600; border-bottom: 1px solid #ddd;">توضیحات</th>
+                                    <th style="padding: 12px; text-align: right; color: #666; font-weight: 600; border-bottom: 1px solid #ddd;">وضعیت</th>
+                                    <th style="padding: 12px; text-align: right; color: #666; font-weight: 600; border-bottom: 1px solid #ddd;">تاریخ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for transaction in transactions %}
+                                    <tr style="border-bottom: 1px solid #eee;">
+                                        <td style="padding: 12px; text-align: right; color: #333;">{{ transaction.get_transaction_type_display }}</td>
+                                        <td style="padding: 12px; text-align: right; color: #2a5298; font-weight: 600;">{{ transaction.amount }} تومان</td>
+                                        <td style="padding: 12px; text-align: right; color: #666; font-size: 0.9em;">{{ transaction.description }}</td>
+                                        <td style="padding: 12px; text-align: right;">
+                                            <span style="background: {% if transaction.status == 'completed' %}#d4edda{% elif transaction.status == 'pending' %}#fff3cd{% else %}#f8d7da{% endif %}; color: {% if transaction.status == 'completed' %}#155724{% elif transaction.status == 'pending' %}#856404{% else %}#721c24{% endif %}; padding: 6px 12px; border-radius: 6px; font-size: 0.85em;">
+                                                {{ transaction.get_status_display }}
+                                            </span>
+                                        </td>
+                                        <td style="padding: 12px; text-align: right; color: #666; font-size: 0.9em;">{{ transaction.created_at|date:"Y-m-d H:i" }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p style="color: #999; text-align: center; padding: 40px;">هنوز تراکنشی انجام نشده است</p>
+                    {% endif %}
+                </div>
+
+            {% elif page == 'bookings' %}
+                <!-- Bookings Page -->
+                <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 3px 10px rgba(0,0,0,0.08);">
+                    <h2 style="margin: 0 0 20px 0; color: #333;">رزروهای من</h2>
+                    {% if bookings %}
+                        <div style="display: grid; gap: 15px;">
+                            {% for booking in bookings %}
+                                <div style="border: 1px solid #ddd; border-radius: 8px; padding: 15px; display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <h4 style="margin: 0 0 8px 0; color: #333;">{{ booking.flight.origin_city }} → {{ booking.flight.destination_city }}</h4>
+                                        <p style="margin: 0; color: #666; font-size: 0.9em;">شماره رزرو: {{ booking.id }}</p>
+                                        <p style="margin: 5px 0 0 0; color: #666; font-size: 0.9em;">{{ booking.created_at|date:"Y-m-d" }}</p>
+                                    </div>
+                                    <div style="text-align: left;">
+                                        <span style="background: {% if booking.status == 'confirmed' %}#d4edda{% else %}#fff3cd{% endif %}; color: {% if booking.status == 'confirmed' %}#155724{% else %}#856404{% endif %}; padding: 8px 12px; border-radius: 6px;">
+                                            {{ booking.get_status_display }}
+                                        </span>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p style="color: #999; text-align: center; padding: 40px;">هنوز رزروی انجام نشده است</p>
+                    {% endif %}
+                </div>
+
+            {% elif page == 'charge' %}
+                <!-- Charge Credit Page -->
+                <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 3px 10px rgba(0,0,0,0.08); max-width: 500px;">
+                    <h2 style="margin: 0 0 20px 0; color: #333;">افزایش اعتبار</h2>
+                    <form method="POST" style="display: flex; flex-direction: column; gap: 15px;">
+                        {% csrf_token %}
+                        <div>
+                            <label style="display: block; color: #666; font-weight: 600; margin-bottom: 8px;">مبلغ (تومان)</label>
+                            <input type="number" name="amount" placeholder="مثال: 100000" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1em;">
+                        </div>
+                        <button type="submit" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">پرداخت و شارژ</button>
+                    </form>
+                </div>
+
+            {% elif page == 'withdrawal' %}
+                <!-- Withdrawal Page -->
+                <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 3px 10px rgba(0,0,0,0.08); max-width: 500px;">
+                    <h2 style="margin: 0 0 20px 0; color: #333;">برداشت اعتبار</h2>
+                    {% if wallet %}
+                        <p style="color: #666; margin: 0 0 20px 0;">موجودی فعلی: <strong>{{ wallet.balance }} تومان</strong></p>
+                    {% endif %}
+                    <form method="POST" style="display: flex; flex-direction: column; gap: 15px;">
+                        {% csrf_token %}
+                        <div>
+                            <label style="display: block; color: #666; font-weight: 600; margin-bottom: 8px;">مبلغ (تومان)</label>
+                            <input type="number" name="amount" placeholder="مثال: 50000" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1em;">
+                        </div>
+                        <div>
+                            <label style="display: block; color: #666; font-weight: 600; margin-bottom: 8px;">شماره حساب بانکی</label>
+                            <input type="text" name="bank_account" placeholder="شماره شبا یا حساب" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1em;">
+                        </div>
+                        <button type="submit" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">درخواست برداشت</button>
+                    </form>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    a:hover {
+        opacity: 0.8;
+    }
+</style>
+{% endblock %}

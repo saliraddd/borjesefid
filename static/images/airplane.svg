@@ -1,0 +1,21 @@
+<svg width="500" height="120" viewBox="0 0 500 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- هواپیما -->
+  <g id="airplane">
+    <!-- بدنه -->
+    <rect x="50" y="45" width="200" height="20" rx="10" fill="#2a5298"/>
+    <!-- سر -->
+    <circle cx="250" cy="55" r="12" fill="#2a5298"/>
+    <!-- دم -->
+    <polygon points="50,55 30,45 30,65" fill="#2a5298"/>
+    <!-- پنجره‌ها -->
+    <circle cx="100" cy="55" r="3" fill="white"/>
+    <circle cx="130" cy="55" r="3" fill="white"/>
+    <circle cx="160" cy="55" r="3" fill="white"/>
+    <circle cx="190" cy="55" r="3" fill="white"/>
+    <!-- بال‌ها -->
+    <ellipse cx="150" cy="55" rx="80" ry="15" fill="#1e3c72" opacity="0.7"/>
+    <!-- چرخ‌ها -->
+    <circle cx="100" cy="68" r="4" fill="#333"/>
+    <circle cx="200" cy="68" r="4" fill="#333"/>
+  </g>
+</svg>

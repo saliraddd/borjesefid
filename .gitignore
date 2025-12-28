@@ -1,0 +1,52 @@
+# محیط‌های مجازی پایتون
+venv/
+env/
+.venv/
+virtualenv/
+.env/
+.env.local
+
+# فایل‌های پایتون موقت
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# فایل‌های IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# فایل‌های تست و لاگ
+logs/
+*.log
+test_reports/
+coverage.xml
+.pytest_cache/
+*.tmp
+test_dashboard.py
+test_wallet.py
+templates/test.html
+templates/test2.html
+
+# فایل‌های سیستم‌عامل
+.DS_Store  # مخصوص Mac
+Thumbs.db  # مخصوص Windows
+
+# فایل‌های حساس
+config_local.py
+secrets.json
+*.key
+
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.env
+.env.local
+.DS_Store
+dist/
+build/
+*.tmp
