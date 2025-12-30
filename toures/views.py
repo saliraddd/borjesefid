@@ -8,7 +8,7 @@ class TourHomeView(TemplateView):
 
 class TourListView(ListView):
     model = Tour
-    template_name = 'toures/tour_list.html'  # بعداً می‌سازیم
+    template_name = 'toures/tour_list.html' 
     context_object_name = 'object_list'
     paginate_by = 12
 
