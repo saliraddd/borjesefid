@@ -1,6 +1,8 @@
 from django.db import models
 from django.urls import reverse
 
+from common.models import Airline, City
+
 class Tour(models.Model):
     TOUR_TYPE_CHOICES = [
         ('internal', 'داخلی'),
@@ -9,7 +11,8 @@ class Tour(models.Model):
 
     title = models.CharField(max_length=200, verbose_name="عنوان تور")
     slug = models.SlugField(max_length=200, unique=True, verbose_name="اسلاگ (برای URL)")
-    destination = models.CharField(max_length=100, verbose_name="مقصد")
+    destination = models.ForeignKey(City, on_delete=models.PROTECT, related_name='tour_destination')
+    airline = models.ForeignKey(Airline, on_delete=models.PROTECT, null=True, blank=True, related_name='tour_airline')
     tour_type = models.CharField(max_length=20, choices=TOUR_TYPE_CHOICES, verbose_name="نوع تور")
     duration = models.PositiveIntegerField(verbose_name="مدت تور (روز)")
     departure_date = models.DateField(verbose_name="تاریخ رفت")

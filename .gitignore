@@ -28,7 +28,6 @@ coverage.xml
 *.tmp
 test_dashboard.py
 test_wallet.py
-templates/test.html
 templates/test2.html
 
 # فایل‌های سیستم‌عامل

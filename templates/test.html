@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% load static %}  <!-- بعد از extends باشه -->
+
+{% block title %}صفحه تست{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="{% static 'css/test.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- <div class="relative w-full h-[350px] md:h-[450px] lg:h-[650px] overflow-hidden aspect-video bg-black">
+  <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('{% static 'images/banner.jpg' %}');"></div>
+    <video
+        id="bannerVideo"
+        class="absolute inset-0 w-full h-full object-cover object-center"
+        autoplay
+        muted
+        playsinline
+        preload="metadata"
+        aria-hidden="true">
+        <source src="{% static 'videos/banner7.mp4' %}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+  <div class="absolute inset-0 z-10 flex items-center justify-center text-white bg-black/30">
+    <h1 class="text-3xl md:text-5xl lg:text-6xl font-bold text-center px-6">
+      متن بنر اینجاست
+    </h1>
+  </div>
+</div> -->
+
+<!-- جاوااسکریپت برای پخش پشت سر هم ویدیوها -->
+<!-- <script>
+  const video = document.getElementById('bannerVideo');
+  
+  const playlist = [
+    "{% static 'videos/banner7.mp4' %}",
+    "{% static 'videos/banner1.mp4' %}",
+    "{% static 'videos/dubai.mp4' %}",
+    "{% static 'videos/banner4.mp4' %}",
+    "{% static 'videos/banner2.mp4' %}",
+    "{% static 'videos/dubai.mp4' %}",
+    "{% static 'videos/banner1.mp4' %}", 
+
+    // ویدیوهای بیشتر رو اینجا اضافه کن
+  ];
+  
+  let currentIndex = 0;
+
+  video.addEventListener('ended', () => {
+    currentIndex = (currentIndex + 1) % playlist.length;
+    video.src = playlist[currentIndex];
+    video.play();
+  });
+</script> -->
+
+
+<!-- Hero Video -->
+  <section class="hero">
+    <video autoplay muted loop playsinline preload="auto">
+      <source src="../static/videos/banner2.mp4" type="video/mp4">
+    </video>
+    <div class="hero-content">
+      <h1>برج سفید</h1>
+      <p>تجربه‌ای فراتر از خرید بلیت</p>
+    </div>
+  </section>
+
+  <!-- Content Sections -->
+  <section class="video-section reveal">
+    <video autoplay muted loop playsinline preload="auto">
+      <source src="../static/videos/banner7.mp4" type="video/mp4">
+    </video>
+    <div class="hero-content">
+      <h2>پروازهای داخلی</h2>
+      <p>بهترین مسیرها، بهترین قیمت‌ها</p>
+    </div>
+  </section>
+
+  <section class="video-section reveal">
+    <video autoplay muted loop playsinline preload="auto">
+      <source src="../static/videos/banner1.mp4" type="video/mp4">
+    </video>
+    <div class="hero-content">
+      <h2>پروازهای خارجی</h2>
+      <p>رزرو ساده، پشتیبانی واقعی</p>
+    </div>
+  </section>
+
+  <section class="video-section reveal">
+    <video autoplay muted loop playsinline preload="auto">
+      <source src="../static/videos/banner4.mp4" type="video/mp4">
+    </video>
+    <div class="hero-content">
+      <h2>سفر لوکس</h2>
+      <p>خدمات ویژه برای تجربه‌ای منحصر به فرد</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="padding:50px 10%; text-align:center; background:#111; color:#fff;">
+    © 2025 برج سفید
+  </footer>
+
+  <!-- JS Scroll Reveal -->
+  <script>
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      },
+      { threshold: 0.2 }
+    );
+
+    document.querySelectorAll('.reveal').forEach(section => observer.observe(section));
+  </script>
+
+
+{% endblock %}
+
