@@ -592,8 +592,85 @@
                 font-weight: 600;
                 color: #333;
             }
-                
-
+            .city-select {
+                width: 100%;
+                padding: 12px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                font-size: 1em;
+                background: white;
+                cursor: pointer;
+            }
+            .city-select:focus {
+                outline: none;
+                border-color: #2a5298;
+                box-shadow: 0 0 0 3px rgba(42,82,152,0.1);
+            }
+            .searchable-select {
+                width: 100%;
+                padding: 12px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                font-size: 1em;
+                background: white url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23666' viewBox='0 0 24 24'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3e%3c/path%3e%3c/svg%3e") no-repeat right 12px center;
+                background-size: 12px;
+                appearance: none;
+                cursor: pointer;
+            }
+            .searchable-select:focus {
+                outline: none;
+                border-color: #2a5298;
+                box-shadow: 0 0 0 3px rgba(42,82,152,0.1);
+            }
+            .searchable-select-container {
+                position: relative;
+            }
+            .searchable-select-container input {
+                width: 100%;
+                padding: 12px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                font-size: 1em;
+            }
+            .searchable-select-container input:focus {
+                outline: none;
+                border-color: #2a5298;
+                box-shadow: 0 0 0 3px rgba(42,82,152,0.1);
+            }
+            .hidden-select {
+                position: absolute;
+                opacity: 0;
+                pointer-events: none;
+            }
+            .dropdown-list {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                max-height: 300px;
+                overflow-y: auto;
+                background: white;
+                border: 1px solid #ddd;
+                border-top: none;
+                border-radius: 0 0 8px 8px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                z-index: 1000;
+                display: none;
+            }
+            .dropdown-list.show {
+                display: block;
+            }
+            .dropdown-item {
+                padding: 12px;
+                cursor: pointer;
+                border-bottom: 1px solid #eee;
+            }
+            .dropdown-item:hover {
+                background: #f0f8ff;
+            }
+            .dropdown-item:last-child {
+                border-bottom: none;
+            }
             /* Responsive */
             @media (max-width: 768px) {
                 .hero h1 {
@@ -637,9 +714,10 @@
     </section>
     
     <!-- Search Box -->
-    <section style="padding: 0 20px;">
+        <!-- Search Box -->
+    <section class="search-section">
         <div class="search-box">
-            <form method="GET" action="{% url 'flights:flights_list' %}" class="search-form" autocomplete="off">
+            <form method="GET" action="{% url 'flights:flights_list' %}" class="search-form">
                 <div class="search-controls">
                     <div class="trip-type">
                         <div class="radio-group">
@@ -654,44 +732,64 @@
                         </div>
                     </div>
                 </div>
-                
-                <div class="control-group">
+
+                <div class="form-row">
                     <div class="form-group">
                         <label>مبدأ</label>
-                        <input type="text" name="origin" placeholder="شهری را انتخاب کنید" value="{{ request.GET.origin }}" list="cities-datalist">
+                        <div class="searchable-select-container">
+                            <input type="text" id="origin-search" placeholder="جستجوی شهر مبدا (نام یا کد)" autocomplete="off" required>
+                            <select name="origin" id="origin-select" class="hidden-select" required>
+                                <option value="">شهر مبدا را انتخاب کنید</option>
+                                {% for city in cities %}
+                                    <option value="{{ city.iata_code }}">
+                                        {{ city.name }} ({{ city.iata_code }})
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
                     </div>
-                    
+
                     <div class="form-group">
                         <label>مقصد</label>
-                        <input type="text" name="destination" placeholder="شهری را انتخاب کنید" value="{{ request.GET.destination }}" list="cities-datalist">
+                        <div class="searchable-select-container">
+                            <input type="text" id="destination-search" placeholder="جستجوی شهر مقصد (نام یا کد)" autocomplete="off" required>
+                            <select name="destination" id="destination-select" class="hidden-select" required>
+                                <option value="">شهر مقصد را انتخاب کنید</option>
+                                {% for city in cities %}
+                                    <option value="{{ city.iata_code }}">
+                                        {{ city.name }} ({{ city.iata_code }})
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
                     </div>
-                    
+
                     <div class="form-group">
                         <label>تاریخ رفت</label>
-                        <input type="date" name="departure_date" value="{{ request.GET.departure_date }}">
+                        <input type="date" name="departure_date" value="{{ request.GET.departure_date }}" required>
                     </div>
 
                     <div class="form-group" id="return-date-group">
                         <label>تاریخ برگشت</label>
                         <input type="date" name="return_date" value="{{ request.GET.return_date }}">
                     </div>
-                    
+
                     <div class="form-group">
                         <label>تعداد مسافران</label>
                         <div class="passenger-dropdown-container">
                             <button type="button" class="passenger-dropdown-button" onclick="togglePassengerMenu(event)">
-                                <span id="passenger-display">۱ بزرگسال</span>
+                                <span id="passenger-display">۱ بزرگسال</span> <i class="fas fa-chevron-down"></i>
                             </button>
                             <div class="passenger-dropdown-menu" id="passenger-menu">
+                                <!-- همون کد قبلی passenger counter -->
                                 <div class="passenger-category">
-                                    <span class="passenger-category-name">بزرگسال</span>
+                                    <span class="passenger-category-name">بزرگسال (۱۲+ سال)</span>
                                     <div class="passenger-counter">
                                         <button type="button" class="counter-btn" onclick="decreasePassenger('adult')">−</button>
                                         <span class="counter-value" id="adult-count">1</span>
                                         <button type="button" class="counter-btn" onclick="increasePassenger('adult')">+</button>
                                     </div>
                                 </div>
-                                
                                 <div class="passenger-category">
                                     <span class="passenger-category-name">کودک (۲-۱۲ سال)</span>
                                     <div class="passenger-counter">
@@ -700,7 +798,6 @@
                                         <button type="button" class="counter-btn" onclick="increasePassenger('child')">+</button>
                                     </div>
                                 </div>
-                                
                                 <div class="passenger-category">
                                     <span class="passenger-category-name">نوزاد (کمتر از ۲ سال)</span>
                                     <div class="passenger-counter">
@@ -711,38 +808,17 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- hidden inputs برای ارسال به view -->
                         <input type="hidden" name="adults" id="adults-input" value="1">
                         <input type="hidden" name="children" id="children-input" value="0">
                         <input type="hidden" name="infants" id="infants-input" value="0">
-                        <input type="hidden" name="total_passengers" id="total-passengers-input" value="1"> {# اختیاری برای راحتی #}
+                        <input type="hidden" name="total_passengers" id="total-passengers-input" value="1">
                     </div>
-                    <template id="cities-template">
-                        <option value="THR">
-                        <option value="MHD">
-                        <option value="ISF">
-                        <option value="SYZ">
-                        <option value="TBZ">
-                        <option value="KIH">
-                        <option value="QSH">
-                        <option value="AHW">
-                        <option value="RST">
-                        <option value="SAR">
-                        <option value="BND">
-                        <option value="KRM">
-                        <option value="YZD">
-                        <option value="ORH">
-                        <option value="ARD">
-                        <!-- شهرهای بیشتر رو اینجا اضافه کن -->
-                    </template>
-                    <datalist id="cities-datalist">
-                        <option value="THR">
-                        <option value="MHD">
-                        <option value="ISF">
-                    </datalist>
-                    <button type="submit" class="search-button">
-                        <i class="fas fa-search"></i> جستجو
-                    </button>
                 </div>
+
+                <button type="submit" class="search-button">
+                    <i class="fas fa-search"></i> جستجوی پرواز
+                </button>
             </form>
         </div>
     </section>
@@ -1182,6 +1258,97 @@
             });
         });
 
+        // لیست شهرها از دیتابیس (در view ارسال می‌شه)
+        const cities = [
+            {% for city in cities %}
+                { name: "{{ city.name }}", name_en: "{{ city.name_en }}", code: "{{ city.iata_code }}" },
+            {% endfor %}
+        ];
+
+        // تابع سرچ زنده
+        /*function liveSearch(inputId, datalistId) {
+            const input = document.getElementById(inputId);
+            const datalist = document.getElementById(datalistId);
+            
+            input.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase().trim();
+                datalist.innerHTML = '';
+
+                if (searchTerm.length < 1) return;
+
+                const matches = cities.filter(city => 
+                    city.name.toLowerCase().includes(searchTerm) ||
+                    city.name_en.toLowerCase().includes(searchTerm) ||
+                    city.code.toLowerCase().includes(searchTerm)
+                );
+
+                matches.slice(0, 10).forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = city.code;
+                    option.textContent = `${city.name} (${city.code})`;
+                    datalist.appendChild(option);
+                });
+            });
+        }
+
+        // فعال کردن سرچ برای مبدا و مقصد
+        liveSearch('origin-input', 'origin-datalist');
+        liveSearch('destination-input', 'destination-datalist'); */
+
+        function setupSearchableSelect(inputId, selectId) {
+            const input = document.getElementById(inputId);
+            const select = document.getElementById(selectId);
+            const options = Array.from(select.options);
+
+            let dropdown = document.createElement('div');
+            dropdown.className = 'dropdown-list';
+            input.parentNode.appendChild(dropdown);
+
+            function filterOptions() {
+                const search = input.value.toLowerCase().trim();
+                dropdown.innerHTML = '';
+
+                const filtered = options.filter(option => 
+                    option.text.toLowerCase().includes(search) && option.value !== ''
+                );
+
+                if (filtered.length === 0) {
+                    dropdown.innerHTML = '<div class="dropdown-item">شهر یافت نشد</div>';
+                } else {
+                    filtered.forEach(option => {
+                        const item = document.createElement('div');
+                        item.className = 'dropdown-item';
+                        item.textContent = option.text;
+                        item.onclick = () => {
+                            input.value = option.text;
+                            select.value = option.value;
+                            dropdown.classList.remove('show');
+                        };
+                        dropdown.appendChild(item);
+                    });
+                }
+
+                dropdown.classList.add('show');
+            }
+
+            input.addEventListener('input', filterOptions);
+            input.addEventListener('focus', filterOptions);
+
+            // بستن لیست وقتی بیرون کلیک شد
+            document.addEventListener('click', (e) => {
+                if (!input.parentNode.contains(e.target)) {
+                    dropdown.classList.remove('show');
+                }
+            });
+        }
+
+        // فعال کردن برای مبدا و مقصد
+        document.addEventListener('DOMContentLoaded', function() {
+            setupSearchableSelect('origin-search', 'origin-select');
+            setupSearchableSelect('destination-search', 'destination-select');
+        });
+    
+        // تاریخ پیش‌فرض امروز
         document.querySelector('input[name="departure_date"]').valueAsDate = new Date();
     </script>
 

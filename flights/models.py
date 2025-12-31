@@ -9,8 +9,10 @@ class Flight(models.Model):
     ]
     
     flight_number = models.CharField(max_length=10, unique=True)
-    origin_city = models.ForeignKey(City, on_delete=models.PROTECT, related_name='flight_departures')
-    destination_city = models.ForeignKey(City, on_delete=models.PROTECT, related_name='flight_arrivals')
+    # origin_city = models.CharField(max_length=100)
+    origin = models.ForeignKey(City, on_delete=models.PROTECT, related_name='flight_departures')
+    destination = models.ForeignKey(City, on_delete=models.PROTECT, related_name='flight_arrivals')
+    # destination_city = models.CharField(max_length=100)
     airline = models.ForeignKey(Airline, on_delete=models.PROTECT)
     departure_time = models.DateTimeField()
     arrival_time = models.DateTimeField()
@@ -27,4 +29,4 @@ class Flight(models.Model):
         ordering = ['-departure_time']
     
     def __str__(self):
-        return f"{self.flight_number} - {self.origin_city} تا {self.destination_city}"
+        return f"{self.flight_number} - {self.origin} تا {self.destination}"

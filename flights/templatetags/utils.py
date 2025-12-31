@@ -17,3 +17,15 @@ def multiply(value, arg):
     except:
         return 0
 
+
+@register.filter
+def replace(value, args):
+    """
+    جایگزینی متن
+    استفاده: {{ "Turkish Airlines"|replace:" :-" }}
+    خروجی: Turkish-Airlines
+    """
+    if not value:
+        return ''
+    old, new = args.split(':')
+    return value.replace(old, new)

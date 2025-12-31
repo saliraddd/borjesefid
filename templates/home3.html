@@ -1,106 +1,79 @@
-{% extends "base.html" %}
-{% block title %}سفیر سفید - رزرو بلیط هواپیما{% endblock %}
-
-{% block extra_css %}
-<style>
-    .hero-section { background: linear-gradient(rgba(0,123,255,0.8), rgba(0,123,255,0.9)), url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?ixlib=rb-4.0.3&auto=format&fit=crop&q=80'); background-size: cover; background-position: center; min-height: 100vh; display: flex; align-items: center; }
-    .search-card { background: white; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); padding: 50px 40px; max-width: 900px; margin: 0 auto; }
-    .search-card h1 { font-size: 38px; color: #007bff; margin-bottom: 40px; }
-    .form-label { font-weight: 700; color: #007bff; }
-    .form-control, .form-select { padding: 14px; font-size: 16px; border-radius: 10px; }
-    .btn-search { background: #007bff; padding: 18px; font-size: 22px; font-weight: bold; border-radius: 10px; }
-    .btn-search:hover { background: #0056b3; }
-    .toggle-return { background: transparent; border: 1px solid #007bff; color: #007bff; padding: 8px 16px; border-radius: 8px; margin-top: 10px; }
-    @media (max-width: 768px) { .search-card { padding: 30px 20px; } .row > div { margin-bottom: 15px; } }
-</style>
-{% endblock %}
-
-{% block content %}
-<div class="hero-section">
-    <div class="container">
-        <div class="search-card">
-            <h1 class="text-center">رزرو بلیط هواپیما</h1>
-            
-            <form action="{% url 'flights:flight_list' %}" method="GET">
-                <div class="row g-4">
-                    <div class="col-md-6">
-                        <label class="form-label">مبدأ</label>
-                        <input type="text" name="origin" class="form-control" list="cities" placeholder="مثال: تهران" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">مقصد</label>
-                        <input type="text" name="destination" class="form-control" list="cities" placeholder="مثال: مشهد" required>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label">تاریخ رفت</label>
-                        <input type="date" name="departure_date" class="form-control" id="departure_date" required>
-                    </div>
-                    <div class="col-md-6 position-relative">
-                        <label class="form-label">تاریخ برگشت <small>(اختیاری)</small></label>
-                        <input type="date" name="return_date" class="form-control" id="return_date">
-                        <button type="button" id="toggleReturn" class="toggle-return">رفت و برگشت</button>
-                    </div>
-
-                    <div class="col-md-3">
-                        <label class="form-label">بزرگسال</label>
-                        <select name="adults" class="form-select">
-                            {% for i in "123456789" %}<option>{{ i }}</option>{% endfor %}
+<div class="form-group">
+                        <label>مبدأ</label>
+                        <select name="origin" class="city-select" required>
+                            <option value="">شهر مبدا را انتخاب کنید</option>
+                            {% for city in cities %}
+                                <option value="{{ city.iata_code }}" {% if request.GET.origin == city.iata_code %}selected{% endif %}>
+                                    {{ city.name }} ({{ city.iata_code }})
+                                </option>
+                            {% endfor %}
                         </select>
                     </div>
-                    <div class="col-md-3">
-                        <label class="form-label">کودک</label>
-                        <select name="children" class="form-select">
-                            {% for i in "012345678" %}<option>{{ i }}</option>{% endfor %}
+
+                    <div class="form-group">
+                        <label>مقصد</label>
+                        <select name="destination" class="city-select" required>
+                            <option value="">شهر مقصد را انتخاب کنید</option>
+                            {% for city in cities %}
+                                <option value="{{ city.iata_code }}" {% if request.GET.destination == city.iata_code %}selected{% endif %}>
+                                    {{ city.name }} ({{ city.iata_code }})
+                                </option>
+                            {% endfor %}
                         </select>
                     </div>
-                    <div class="col-md-3">
-                        <label class="form-label">نوزاد</label>
-                        <select name="infants" class="form-select">
-                            {% for i in "01234" %}<option>{{ i }}</option>{% endfor %}
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">کلاس پرواز</label>
-                        <select name="class_type" class="form-select">
-                            <option>اکونومی</option>
-                            <option>بیزینس</option>
-                            <option>فرست کلاس</option>
-                        </select>
-                    </div>
-                </div>
 
-                <button type="submit" class="btn btn-primary btn-search w-100 mt-5">جستجوی پروازها</button>
-            </form>
-        </div>
-    </div>
-</div>
 
-<datalist id="cities">
-    <option>تهران</option><option>مشهد</option><option>اصفهان</option><option>شیراز</option><option>تبریز</option>
-    <option>کیش</option><option>اهواز</option><option>قشم</option><option>رشت</option><option>ساری</option>
-    <option>بندرعباس</option><option>کرمان</option><option>یزد</option><option>ارومیه</option><option>اردبیل</option>
-</datalist>
-{% endblock %}
 
-{% block extra_js %}
-<script>
-    // تاریخ امروز برای رفت
-    document.getElementById('departure_date').valueAsDate = new Date();
 
-    // Toggle رفت و برگشت
-    document.getElementById('toggleReturn').addEventListener('click', function() {
-        const returnInput = document.getElementById('return_date');
-        if (returnInput.style.display === 'none' || !returnInput.style.display) {
-            returnInput.style.display = 'block';
-            returnInput.required = true;
-            this.textContent = 'فقط رفت';
-        } else {
-            returnInput.style.display = 'none';
-            returnInput.required = false;
-            returnInput.value = '';
-            this.textContent = 'رفت و برگشت';
+
+                    function setupSearchableSelect(selectId) {
+            const select = document.getElementById(selectId);
+            if (!select) return;
+
+            const options = Array.from(select.options).slice(1); // بدون گزینه اول (placeholder)
+
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.placeholder = 'جستجوی شهر...';
+            input.style.cssText = `
+                width: 100%;
+                padding: 12px;
+                border: 1px solid #ddd;
+                border-radius: 8px 8px 0 0;
+                font-size: 1em;
+                margin-bottom: -1px;
+                border-bottom: none;
+            `;
+
+            const container = document.createElement('div');
+            container.style.position = 'relative';
+            select.parentNode.insertBefore(container, select);
+            container.appendChild(input);
+            container.appendChild(select);
+
+            input.addEventListener('input', function() {
+                const search = this.value.toLowerCase();
+                select.innerHTML = '<option value="">شهر را جستجو و انتخاب کنید</option>';
+
+                const filtered = options.filter(option => 
+                    option.text.toLowerCase().includes(search)
+                );
+
+                filtered.forEach(option => select.appendChild(option.cloneNode(true)));
+
+                // اگر چیزی پیدا نشد
+                if (filtered.length === 0) {
+                    const noResult = document.createElement('option');
+                    noResult.textContent = 'شهر یافت نشد';
+                    noResult.disabled = true;
+                    select.appendChild(noResult);
+                }
+            });
+
+            // وقتی کاربر روی input کلیک کرد، dropdown باز بشه
+            input.addEventListener('focus', () => select.focus());
         }
-    });
-</script>
-{% endblock %}
+
+        // فعال کردن برای مبدا و مقصد
+        setupSearchableSelect('origin-select');
+        setupSearchableSelect('destination-select');
