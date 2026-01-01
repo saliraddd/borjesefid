@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import TourHomeView, TourListView, TourDetailView  
 
-app_name = 'toures'  # یا 'tours' – هر چی می‌خوای، اما یکسان باشه
+app_name = 'tours' 
 
 urlpatterns = [
     path('', TourHomeView.as_view(), name='tour_home'),

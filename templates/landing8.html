@@ -57,134 +57,107 @@
             transition: transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
         .section:hover .section-content {
-            transform: translateY(-150px);
+            transform: translateY(-80px);
         }
         .section-title {
-            font-size: 2.5em;
+            font-size: 3em;
             font-weight: bold;
             text-shadow: 0 10px 30px rgba(0,0,0,0.8);
             letter-spacing: 2px;
             color: white;
         }
 
-        /* فرم جستجو - سه‌بعدی و برجسته */
+        /* پس‌زمینه تیره */
+        .modal-backdrop {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.8s ease;
+            z-index: 999;
+        }
+        .modal-backdrop.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* فرم جستجو - اسلاید از پایین به وسط */
         .search-modal {
             position: fixed;
-            bottom: -100%;
+            bottom: -100%; /* شروع از پایین خارج صفحه */
             left: 50%;
             transform: translateX(-50%);
             width: 80%;
             max-width: 1000px;
-            background: rgba(255, 255, 255, 0.12);
-            color: white;
-            padding: 50px;
-            border-radius: 30px;
-            box-shadow: 
-                0 20px 40px rgba(0,0,0,0.4),
-                0 0 20px rgba(0,212,255,0.2),
-                inset 0 0 20px rgba(255,255,255,0.05);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(255,255,255,0.2);
-            transition: all 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            background: white;
+            color: #333;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            transition: bottom 2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             z-index: 1000;
         }
         .search-modal.show {
-            bottom: 50%;
+            bottom: 50%; /* میاد وسط صفحه */
             transform: translateX(-50%) translateY(50%);
-        }
-        .search-modal::before {
-            content: '';
-            position: absolute;
-            top: -10px; left: -10px; right: -10px; bottom: -10px;
-            background: linear-gradient(45deg, rgba(0,212,255,0.1), rgba(255,255,255,0.05));
-            border-radius: 35px;
-            z-index: -1;
-            filter: blur(20px);
         }
         .search-modal .close-btn {
             position: absolute;
-            top: 25px;
-            left: 25px;
-            background: rgba(255,255,255,0.1);
+            top: 20px;
+            left: 20px;
+            background: none;
             border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            font-size: 1.8em;
-            color: white;
+            font-size: 2em;
+            color: #999;
             cursor: pointer;
-            transition: all 0.3s;
-        }
-        .search-modal .close-btn:hover {
-            background: rgba(255,255,255,0.2);
-            transform: scale(1.1);
         }
         .search-modal h2 {
             text-align: center;
-            margin-bottom: 40px;
-            color: white;
-            font-size: 3em;
-            text-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            margin-bottom: 30px;
+            color: #2a5298;
+            font-size: 2.5em;
         }
         .search-form .form-row {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 25px;
+            gap: 20px;
         }
         .search-form .form-group label {
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             font-weight: 600;
-            color: rgba(255,255,255,0.9);
-            font-size: 1.1em;
         }
         .search-form .form-group input {
             width: 100%;
-            padding: 16px;
-            border: 1px solid rgba(255,255,255,0.3);
-            border-radius: 15px;
-            font-size: 1.2em;
-            background: rgba(255,255,255,0.1);
-            color: white;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s;
-        }
-        .search-form .form-group input::placeholder {
-            color: rgba(255,255,255,0.6);
-        }
-        .search-form .form-group input:focus {
-            outline: none;
-            border-color: #00d4ff;
-            box-shadow: 0 0 0 4px rgba(0,212,255,0.2);
-            transform: scale(1.02);
+            padding: 14px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 1.1em;
         }
         .search-form .search-btn {
-            background: linear-gradient(135deg, rgba(30,60,114,0.9), rgba(42,82,152,0.9));
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             color: white;
             border: none;
-            padding: 18px 60px;
-            border-radius: 15px;
-            font-size: 1.6em;
+            padding: 16px 50px;
+            border-radius: 12px;
+            font-size: 1.4em;
             cursor: pointer;
-            margin-top: 40px;
+            margin-top: 30px;
             width: 100%;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            transition: all 0.5s;
-        }
-        .search-form .search-btn:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0,212,255,0.4);
         }
 
         @media (max-width: 768px) {
             .search-modal {
                 width: 95%;
-                padding: 30px;
+                padding: 20px;
             }
-            .search-modal h2 { font-size: 2.5em; }
-            .search-form .search-btn { font-size: 1.4em; }
+            .search-modal.show {
+                bottom: 50%;
+                transform: translateX(-50%) translateY(50%);
+            }
+            .search-modal h2 { font-size: 2em; }
         }
     </style>
 </head>
@@ -224,7 +197,10 @@
         </a>
     </div>
 
-    <!-- فرم جستجوی پرواز - سه‌بعدی و برجسته -->
+    <!-- پس‌زمینه تیره -->
+    <div class="modal-backdrop" id="modal-backdrop"></div>
+
+    <!-- فرم جستجوی پرواز - اسلاید از پایین به وسط -->
     <div class="search-modal" id="flight-search-modal">
         <button class="close-btn" onclick="closeFlightSearch()">×</button>
         <h2>جستجوی پرواز</h2>
@@ -254,10 +230,13 @@
     <script>
         function openFlightSearch() {
             document.getElementById('flight-search-modal').classList.add('show');
+            document.getElementById('modal-backdrop').classList.add('show');
         }
         function closeFlightSearch() {
             document.getElementById('flight-search-modal').classList.remove('show');
+            document.getElementById('modal-backdrop').classList.remove('show');
         }
+        document.getElementById('modal-backdrop').addEventListener('click', closeFlightSearch);
     </script>
 </body>
 </html>
