@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}جستجوی تور - برج سفید{% endblock %}
+{% block title %}جستجوی تور{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/style_home.css' %}"> {# اگر CSS جدا داری #}
@@ -9,7 +9,7 @@
 
 {% block content %}
 <div class="tour-search-hero">
-    <h1 class="tour-search-title">تورهای رویایی برج سفید</h1>
+    <h1 class="tour-search-title">تورهای رویایی</h1>
     
     <div class="tour-search-form">
         <form method="GET" action="{% url 'tours:tour_list' %}">
