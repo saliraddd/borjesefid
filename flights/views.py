@@ -1,9 +1,12 @@
 from django.views.generic import ListView, DetailView, TemplateView
+from django.db.models import Q
 from .sepehr_api import get_sepehr_flights
 from .models import Flight
 from common.models import City
 from django.shortcuts import render
 from datetime import datetime
+from django.http import JsonResponse
+from common.models import City
 
 
 class LandingView(TemplateView):
@@ -40,9 +43,9 @@ class FlightListView(ListView):
         db_flights = Flight.objects.select_related('airline', 'origin', 'destination')
 
         if origin_code:
-            db_flights = db_flights.filter(origin__iata_code__iexact=origin_code)
+            db_flights = db_flights.filter(Q(origin__iata_code__iexact=origin_code) | Q(origin__name_en__iexact=origin_code))
         if destination_code:
-            db_flights = db_flights.filter(destination__iata_code__iexact=destination_code)
+            db_flights = db_flights.filter(Q(destination__iata_code__iexact=destination_code) | Q(destination__name_en__iexact=destination_code))
         if departure_date_str:
             try:
                 departure_date = datetime.strptime(departure_date_str, '%Y-%m-%d').date()
@@ -88,6 +91,28 @@ class FlightDetailView(DetailView):
     model = Flight
     template_name = 'flights/flight_detail.html'
     context_object_name = 'flight'
+
+def city_search(request):
+    query = request.GET.get('q', '').strip()
+    cities = City.objects.all()
+
+    if query:
+        cities = cities.filter(
+            Q(name__icontains=query) |
+            Q(name_en__icontains=query) |
+            Q(iata_code__iexact=query)
+        )
+
+    # اولویت به شهرهای محبوب
+    popular = cities.filter(is_popular=True)[:4]
+    # others = cities.exclude(is_popular=True)[:10]  # حداکثر ۱۰ تا دیگه
+
+    result = [
+        {'name': c.name, 'name_en': c.name_en, 'iata': c.iata_code}
+        for c in (list(popular))#+ list(others)
+    ]
+
+    return JsonResponse({'cities': result})
 
 
 def test_view(request):

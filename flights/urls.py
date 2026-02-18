@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import LandingView, HomeView, FlightListView, FlightDetailView, test_view, LandingView2, LandingView3
+from .views import LandingView, HomeView, FlightListView, FlightDetailView, city_search, test_view, LandingView2, LandingView3
 
 app_name = 'flights'
 
@@ -10,5 +10,6 @@ urlpatterns = [
     path('flight/', HomeView.as_view(), name='home'),
     path('flight/list/', FlightListView.as_view(), name='flights_list'),
     path('<int:pk>/', FlightDetailView.as_view(), name='flight_detail'),
+    path('city-search/', city_search, name='city_search'),
     path('test/', test_view, name='test'),
 ]

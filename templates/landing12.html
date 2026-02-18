@@ -20,7 +20,7 @@
 
         <div class="header-center">
             <div class="logo">
-                <img src="{% static 'images/logo3.gif' %}" alt="معین گردشگری">
+                <img src="{% static 'images/logo4.png' %}" alt="معین گردشگری">
             </div>
         </div>
 
@@ -36,6 +36,7 @@
     <div class="side-menu" id="side-menu">
         <div class="menu-header">
             <button class="close-menu" onclick="toggleMenu()">×</button>
+            <span class="close-text">بستن</span>
         </div>
         <div class="menu-content">
             <a href="{% url 'accounts:login' %}" class="menu-item">
@@ -133,7 +134,7 @@
     <div class="search-modal" id="hotel-modal">
         <button class="close-btn" onclick="closeSearchModal('hotel')">×</button>
         <h2>جستجوی هتل</h2>
-        <form class="search-form" method="GET" action="/hotels/search/">
+        <form class="search-form" method="GET" action="/hotels/search/"> <!-- بعداً تغییر بده -->
             <div class="form-row">
                 <div class="form-group">
                     <label>شهر مقصد</label>
@@ -201,8 +202,9 @@
         </form>
     </div>
 
+    
     <script>
-        // تابع مشترک برای دراپ‌داون شهرها
+        // تابع مشترک برای همه دراپ‌داون‌های شهر
         function initCityDropdown(inputId, listId, hiddenId) {
             const input = document.getElementById(inputId);
             const list = document.getElementById(listId);
@@ -213,9 +215,11 @@
                 return;
             }
 
+            // وقتی فیلد فوکوس می‌شه یا تایپ می‌کنه
             input.addEventListener('focus', () => fetchCities(''));
             input.addEventListener('input', () => fetchCities(input.value.trim()));
 
+            // بستن لیست وقتی خارج از آن کلیک می‌شه
             document.addEventListener('click', (e) => {
                 if (!input.contains(e.target) && !list.contains(e.target)) {
                     list.innerHTML = '';
@@ -226,10 +230,15 @@
             async function fetchCities(query) {
                 try {
                     const url = `/city-search/?q=${encodeURIComponent(query)}`;
+                    console.log('درخواست به:', url); // برای دیباگ
+
                     const response = await fetch(url);
-                    if (!response.ok) throw new Error('پاسخ ناموفق');
+                    if (!response.ok) {
+                        throw new Error('پاسخ ناموفق از سرور');
+                    }
 
                     const data = await response.json();
+                    console.log('داده‌های شهرها:', data); // برای دیباگ
 
                     list.innerHTML = '';
                     list.classList.add('show');
@@ -253,22 +262,26 @@
                     });
                 } catch (err) {
                     console.error('خطا در لود شهرها:', err);
-                    list.innerHTML = '<div class="city-item no-result">خطا در بارگذاری</div>';
+                    list.innerHTML = '<div class="city-item no-result">خطا در بارگذاری شهرها</div>';
                     list.classList.add('show');
                 }
             }
         }
 
-        // فعال کردن دراپ‌داون‌ها
+        // فعال کردن دراپ‌داون برای همه فیلدهای شهر (پرواز، هتل، تور)
         document.addEventListener('DOMContentLoaded', () => {
+            // پرواز
             initCityDropdown('origin-input', 'origin-list', 'origin-iata');
             initCityDropdown('destination-input', 'destination-list', 'destination-iata');
+
+            // هتل
             initCityDropdown('hotel-city-input', 'hotel-city-list', 'hotel-city-iata');
+
+            // تور
             initCityDropdown('tour-origin-input', 'tour-origin-list', 'tour-origin-iata');
             initCityDropdown('tour-destination-input', 'tour-destination-list', 'tour-destination-iata');
         });
 
-        // منوی همبرگری
         function toggleMenu() {
             const menu = document.getElementById('side-menu');
             const backdrop = document.getElementById('backdrop');
@@ -284,43 +297,42 @@
             }
         }
 
-        // کلیک روی backdrop → هم فرم‌ها و هم منو بسته بشن
-        document.getElementById('backdrop').addEventListener('click', function() {
-            // بستن همه فرم‌ها
-            document.querySelectorAll('.search-modal').forEach(m => m.classList.remove('show'));
-            
-            // بستن منو
-            const menu = document.getElementById('side-menu');
-            if (menu.classList.contains('open')) {
-                toggleMenu();
-            }
-            
-            // مخفی کردن خود backdrop
-            this.classList.remove('show');
-        });
-
-        // توابع فرم‌ها
+        // توابع باز و بسته کردن مودال‌ها
         function openSearchModal(type) {
             document.querySelectorAll('.search-modal').forEach(m => m.classList.remove('show'));
-            document.getElementById('backdrop').classList.add('show');
-            const modal = document.getElementById(type + '-modal');
-            if (modal) modal.classList.add('show');
+            document.getElementById('modal-backdrop').classList.add('show');
+            document.getElementById(type + '-modal').classList.add('show');
         }
 
         function closeSearchModal(type) {
-            const modal = document.getElementById(type + '-modal');
-            if (modal) modal.classList.remove('show');
-            document.getElementById('backdrop').classList.remove('show');
+            document.getElementById(type + '-modal').classList.remove('show');
+            document.getElementById('modal-backdrop').classList.remove('show');
         }
 
-        document.getElementById('backdrop').addEventListener('click', function() {
+        document.getElementById('modal-backdrop').addEventListener('click', function() {
             closeSearchModal('flight');
             closeSearchModal('hotel');
             closeSearchModal('tour');
-            if (document.getElementById('side-menu').classList.contains('open')) {
-                toggleMenu();
-            }
         });
     </script>
+    <script>
+        function openSearchModal(type) {
+            document.querySelectorAll('.search-modal').forEach(m => m.classList.remove('show'));
+            document.getElementById('modal-backdrop').classList.add('show');
+            document.getElementById(type + '-modal').classList.add('show');
+        }
+
+        function closeSearchModal(type) {
+            document.getElementById(type + '-modal').classList.remove('show');
+            document.getElementById('modal-backdrop').classList.remove('show');
+        }
+
+        document.getElementById('modal-backdrop').addEventListener('click', function() {
+            closeSearchModal('flight');
+            closeSearchModal('hotel');
+            closeSearchModal('tour');
+        });
+    </script>
+
 </body>
 </html>
