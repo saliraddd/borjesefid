@@ -1,74 +1,797 @@
-<!-- <a href="{% url 'bookings:create_booking' flight.pk %}" class="select-btn">
-                            رزرو این پرواز
-                        </a> -->
+<div class="flight-card">
+                <div class="flight-header">
+                    <!-- بخش اصلی پرواز -->
+                    <div class="flight-details-section">
+                        <div class="airline-logo">
+                            <img src="https://cdn.alibaba.ir/static/img/airlines/Domestic/{{ flight.airline_iata }}.png" 
+                                alt="{{ flight.airline }}" onerror="this.style.display='none'">
+                        </div>
 
-                        
+                        <div class="flight-times">
+                            <div class="time-block">
+                                <div class="time-big">{{ flight.departure_time|date:"H:i" }}</div>
+                                <div class="city-name">{{ flight.origin_city }}</div>
+                            </div>
 
+                            <div class="duration-arrow">
+                                <i class="fas fa-plane"></i>
+                                <div class="duration-text">
+                                    مدت پرواز: حدود ۱ ساعت و ۳۰ دقیقه {# بعداً داینامیک می‌کنیم #}
+                                </div>
+                            </div>
 
+                            <div class="time-block">
+                                <div class="time-big">{{ flight.arrival_time|date:"H:i" }}</div>
+                                <div class="city-name">{{ flight.destination_city }}</div>
+                            </div>
+                        </div>
 
-<div class="flight-price-section">
-                        <!-- <div class="price-big">{{ flight.price_per_seat|floatformat:"0"|intcomma }} تومان</div> -->
+                        <div class="flight-tags-container">
+                            <div class="flight-tags">
+                                <span class="tag">چارتری</span>
+                                <span class="tag">اکونومی</span>
+                                <span class="tag">{{ flight.aircraft_type }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- بخش قیمت و دکمه رزرو -->
+                    <div class="flight-price-section">
                         <div class="price-big">
-                            {{ flight.price_per_seat|multiply:total_passengers|floatformat:"0"|intcomma }} تومان
+                            {{ flight.price_per_seat|multiply:total_passengers|intcomma }} تومان
                             <small style="display: block; font-size: 0.7em; color: #666; margin-top: 8px;">
                                 برای {{ total_passengers }} مسافر
+                                {% if not flight.is_internal %}
+                                    <br><span style="color: #e67e22;">(از سپهر ۳۶۰)</span>
+                                {% endif %}
                             </small>
                         </div>
                         <div class="seats-left {% if flight.available_seats <= 5 %}warning{% endif %}">
-                            {% if flight.available_seats > 0 %}
-                                {{ flight.available_seats }} صندلی باقی مانده
-                            {% else %}
-                                ظرفیت تکمیل شده
-                            {% endif %}
+                            {{ flight.available_seats }} صندلی باقی مانده
                         </div>
-                        <a href="https://sepehr360.ir/Flight/B2b/Search?origin=THR,IKA,PYK&destination=KIH" target="_blank" class="select-btn">
-                            رزرو از سپهر ۳۶۰
-                        </a>
-                        <small style="display: block; margin-top: 10px; color: #666;">
-                            (رزرو مستقیم در سایت سپهر ۳۶۰)
-                        </small>
+
+                        {% if flight.is_internal %}
+                            <a href="{% url 'bookings:create_booking' flight.id %}" class="select-btn">
+                                رزرو این پرواز
+                            </a>
+                        {% else %}
+                            <a href="https://sepehr360.ir" target="_blank" class="select-btn" style="background: #e67e22;">
+                                رزرو در سپهر ۳۶۰
+                            </a>
+                        {% endif %}
                     </div>
+                </div>
 
+                <!-- تب‌های کشویی -->
+                <div class="tabs">
+                    <div class="tab" onclick="toggleTab(event, 'flight-info-{{ forloop.counter }}')">
+                        اطلاعات پرواز <i class="fas fa-chevron-down tab-icon"></i>
+                    </div>
+                    <div class="tab" onclick="toggleTab(event, 'rules-{{ forloop.counter }}')">
+                        قوانین استرداد <i class="fas fa-chevron-down tab-icon"></i>
+                    </div>
+                    <div class="tab" onclick="toggleTab(event, 'baggage-{{ forloop.counter }}')">
+                        بار مجاز <i class="fas fa-chevron-down tab-icon"></i>
+                    </div>
+                </div>
 
-
-
-<li><strong>شماره پرواز:</strong> {{ flight.flight_number }}</li>
+                <!-- محتوای کشویی -->
+                <div id="flight-info-{{ forloop.counter }}" class="tab-content">
+                    <div class="tab-panel">
+                        <ul>
+                            <li><strong>شماره پرواز:</strong> {{ flight.flight_number }}</li>
                             <li><strong>ایرلاین:</strong> {{ flight.airline }}</li>
-                            <li><strong>نوع هواپیما:</strong> {{ flight.aircraft_type }}</li>
-                            <li><strong>زمان حرکت:</strong> {{ flight.departure_time|date:"Y/m/d H:i" }} از {{ flight.origin_city }}</li>
-                            <li><strong>زمان رسیدن:</strong> {{ flight.arrival_time|date:"Y/m/d H:i" }} به {{ flight.destination_city }}</li>
-                            <li><strong>کلاس پرواز:</strong> اکونومی</li>
-                            <li><strong>نوع بلیط:</strong> چارتری</li>
+                            <li><strong>نوع هواپیما:</strong> {{ flight.aircraft_type|default:"نامشخص" }}</li>
+                            <li><strong>زمان حرکت:</strong> {{ flight.departure_time }}</li>
+                            <li><strong>زمان رسیدن:</strong> {{ flight.arrival_time|default:"نامشخص" }}</li>
+                            <li><strong>کلاس پرواز:</strong> {{ flight.class_type|default:"اکونومی" }}</li>
+                            <li><strong>منبع:</strong> {% if flight.is_internal %}داخلی{% else %}سپهر ۳۶۰{% endif %}</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="rules-{{ forloop.counter }}" class="tab-content">
+                    <div class="tab-panel">
+                        <p>قوانین استرداد بسته به ایرلاین متفاوت است. معمولاً:</p>
+                        <ul>
+                            <li>تا ۲۴ ساعت قبل: جریمه ۳۰٪</li>
+                            <li>تا ۴ ساعت قبل: جریمه ۵۰٪</li>
+                            <li>کمتر از ۴ ساعت: غیرقابل استرداد</li>
+                        </ul>
+                        <p style="margin-top: 10px; color: #e74c3c;">برای جزئیات دقیق با پشتیبانی تماس بگیرید.</p>
+                    </div>
+                </div>
+
+                <div id="baggage-{{ forloop.counter }}" class="tab-content">
+                    <div class="tab-panel">
+                        <p><strong>بار مجاز:</strong></p>
+                        <ul>
+                            <li>بار دستی: ۷ کیلوگرم (ابعاد حداکثر ۵۵×۴۰×۲۰ سانتی‌متر)</li>
+                            <li>بار داخل انبار: ۲۰ کیلوگرم</li>
+                            <li>بار اضافی: هر کیلو ۰.۵٪ قیمت بلیط</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
 
 
 
 
 
-<script>
-    function toggleTab(event, tabId) {
-        const tab = event.currentTarget;
-        const content = document.getElementById(tabId);
-        const card = tab.closest('.flight-card');
 
-        // پیدا کردن همه تب‌ها و محتواها در همین کارت
-        const allTabs = card.querySelectorAll('.tab');
-        const allContents = card.querySelectorAll('.tab-content');
 
-        // اگر این تب فعال بود، همه رو ببند
-        if (tab.classList.contains('active')) {
-            allTabs.forEach(t => t.classList.remove('active'));
-            allContents.forEach(c => c.classList.remove('open'));
-            return;
-        }
 
-        // بستن همه
-        allTabs.forEach(t => t.classList.remove('active'));
-        allContents.forEach(c => c.classList.remove('open'));
 
-        // باز کردن تب کلیک شده
-        tab.classList.add('active');
-        content.classList.add('open');
+
+
+
+
+body {
+    background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 100%);
+    color: #e0e0ff;
+    min-height: 100vh;
+    font-family: 'Vazirmatn', system-ui, -apple-system, sans-serif;
+    padding-top: 75px;
+}
+
+
+
+
+/* =============================================
+   هدر Glassmorphism + ثابت
+   ============================================= */
+
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    height: 75px;                    /* ارتفاع هدر – می‌توانید تغییر دهید */
+    background: rgba(12, 12, 28, 0.32);
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    border-bottom: 1px solid rgba(100, 110, 180, 0.18);
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.4);
+    transition: background 0.4s ease, backdrop-filter 0.4s ease;
+}
+
+header.scrolled {
+    /* وقتی کمی اسکرول شد → کمی مات‌تر و شیک‌تر (اختیاری) */
+    background: rgba(8, 8, 22, 0.48);
+    backdrop-filter: blur(20px) saturate(180%);
+}
+
+/* مرکز محتوا */
+.header-content {
+    max-width: 1180px;
+    margin: 0 auto;
+    height: 100%;
+    padding: 0 25px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* لوگو */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #e0e0ff;
+    font-size: 1.45rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.logo i {
+    font-size: 1.6rem;
+    color: #8b5cf6;               /* رنگ آیکون هواپیما – می‌توانید تغییر دهید */
+}
+
+.logo:hover {
+    color: #c4b5fd;
+}
+
+/* منو / لینک‌ها */
+nav {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+}
+
+nav a {
+    color: #d0d0ff;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1.05rem;
+    transition: all 0.28s ease;
+    padding: 6px 12px;
+    border-radius: 8px;
+}
+
+nav a:hover {
+    color: #e0e0ff;
+    background: rgba(100, 100, 180, 0.15);
+}
+
+/* دکمه‌های ورود / عضویت / خروج */
+nav a[style*="background"] {
+    transition: all 0.3s ease;
+    border: 1px solid rgba(180, 180, 255, 0.15);
+}
+
+nav a[style*="background"]:hover {
+    background: rgba(140, 140, 220, 0.35) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(100, 100, 180, 0.25);
+}
+
+/* نام کاربری */
+nav span {
+    color: #c4b5fd;
+    font-weight: 500;
+}
+
+/* فضای خالی زیر هدر برای جلوگیری از روی‌هم‌افتادن */
+body {
+    padding-top: 75px;               /* دقیقاً برابر با height هدر */
+    /* اگر هدر شما responsive است و ارتفاعش تغییر می‌کند، از min-height یا js استفاده کنید */
+}
+
+/* در صفحه لیست پروازها – برای اطمینان */
+.results-container {
+    padding-top: 20px;               /* فاصله اضافی از هدر */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.results-container {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+/* برای حس لاکچری بیشتر می‌تونی background تصویر بلور شده بذاری */
+.results-container::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2000') center/cover no-repeat;
+    filter: blur(120px) brightness(0.3);
+    z-index: -2;
+    opacity: 0.6;
+}
+
+.flight-card {
+    background: rgba(30, 30, 60, 0.28);
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    border: 1px solid rgba(120, 120, 180, 0.18);
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 28px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform: translateY(0);
+}
+
+.flight-card:hover {
+    transform: translateY(-12px) scale(1.015);
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.6),
+                0 0 0 1px rgba(100, 150, 255, 0.15) inset,
+                0 0 30px rgba(100, 150, 255, 0.08);
+    border-color: rgba(140, 160, 255, 0.35);
+}
+
+/* جلوگیری از بلور شدن بیش از حد در hover */
+.flight-card:hover {
+    backdrop-filter: blur(20px) saturate(160%);
+}
+
+.flight-main-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px 16px;
+    gap: 24px;
+    flex-wrap: wrap;           /* خیلی مهم برای موبایل */
+}
+
+.flight-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    min-width: 0;              /* جلوگیری از بیرون‌زدگی */
+    flex: 1;
+}
+
+.flight-route {
+    display: flex;
+    align-items: center;
+    gap: 16px 32px;
+    flex-wrap: wrap;
+}
+
+.flight-route .time {
+    font-size: 2.1rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #f1f1ff;
+}
+
+.flight-route .city {
+    font-size: 0.94rem;
+    color: #b0b0d8;
+    margin-top: 4px;
+}
+
+.flight-direction {
+    text-align: center;
+    min-width: 80px;
+    color: #9b8aff;
+}
+
+.flight-direction i {
+    font-size: 1.4rem;
+    margin-bottom: 4px;
+}
+
+.flight-direction .duration {
+    font-size: 0.86rem;
+    white-space: nowrap;
+}
+
+/* ── بخش قیمت و رزرو ──────────────────────────────────────── */
+.flight-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+    min-width: 220px;
+    text-align: right;
+}
+
+.price-main {
+    font-size: 2.3rem;
+    font-weight: 800;
+    background: linear-gradient(90deg, #c084fc, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1;
+}
+
+.price-main + .currency {
+    font-size: 1.1rem;
+    color: #d0d0ff;
+    margin-right: 6px;
+}
+
+.price-sub {
+    font-size: 0.9rem;
+    color: #a0a0c8;
+}
+
+.seats-info {
+    font-size: 0.96rem;
+    font-weight: 500;
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: rgba(100, 255, 100, 0.12);
+    color: #a0ffa0;
+}
+
+.seats-info.urgent  { background: rgba(255, 80, 80, 0.18); color: #ffaaaa; }
+.seats-info.warning { background: rgba(255, 180, 60, 0.18); color: #ffdd99; }
+
+.btn-reserve {
+    margin-top: 8px;
+    padding: 12px 32px;
+    border-radius: 50px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.28s ease;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+}
+
+.btn-reserve.primary {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+}
+
+.btn-reserve.external {
+    background: linear-gradient(135deg, #f59e0b, #ea580c);
+    color: white;
+}
+
+.btn-reserve:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(99,102,241,0.4);
+}
+
+/* ── موبایل ──────────────────────────────────────────────── */
+@media (max-width: 680px) {
+    .flight-main-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 20px;
+        padding: 20px 18px 16px;
     }
-</script>
 
+    .flight-right {
+        align-items: center;
+        text-align: center;
+        min-width: unset;
+        width: 100%;
+    }
+
+    .flight-route {
+        justify-content: space-between;
+        width: 100%;
+        gap: 12px;
+    }
+
+    .flight-route .time {
+        font-size: 1.9rem;
+    }
+}
+
+.flight-times {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+}
+
+.time-big {
+    font-size: 2.1rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #f0f0ff;
+}
+
+.city-name {
+    font-size: 0.95rem;
+    color: #a0a0d0;
+    margin-top: 4px;
+}
+
+.duration-arrow {
+    text-align: center;
+    color: #8a8aff;
+}
+
+.duration-text {
+    font-size: 0.82rem;
+    margin-top: 6px;
+    white-space: nowrap;
+}
+
+.flight-price-section {
+    text-align: right;
+}
+
+.price-big {
+    font-size: 2.1rem;
+    font-weight: 800;
+    color: #c0d0ff;
+    background: linear-gradient(90deg, #a78bfa, #7f9cf5);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.seats-left {
+    font-size: 0.92rem;
+    margin: 8px 0;
+    color: #a0ffa0;
+}
+
+.seats-left.warning {
+    color: #ff9e9e;
+}
+
+.select-btn {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 14px 36px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.35);
+}
+
+.select-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(99, 102, 241, 0.5);
+    background: linear-gradient(135deg, #7c3aed, #a78bfa);
+}
+
+.tabs {
+    display: flex;
+    background: rgba(20, 20, 50, 0.4);
+    border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.tab {
+    flex: 1;
+    padding: 16px;
+    text-align: center;
+    color: #b0b0e0;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    border-bottom: 3px solid transparent;
+}
+
+.tab:hover,
+.tab.active {
+    color: #d0d0ff;
+    background: rgba(50, 50, 90, 0.35);
+    border-bottom-color: #7c3aed;
+}
+
+.tab-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.4s ease;
+    background: rgba(25, 25, 55, 0.25);
+}
+
+.tab-content.open {
+    max-height: 400px;   /* یا مقدار بیشتر بسته به محتوا */
+    padding: 20px 28px;
+}
+
+.tab-panel ul {
+    list-style: none;
+    padding: 0;
+}
+
+.tab-panel li {
+    margin: 10px 0;
+    color: #d0d0ff;
+}
+
+.tab-panel li strong {
+    color: #a0a0ff;
+}
+
+.no-results {
+    text-align: center;
+    padding: 100px 20px;
+    color: #b0b0e0;
+}
+
+.no-results i {
+    font-size: 5rem;
+    color: #7c3aed;
+    margin-bottom: 20px;
+}
+
+
+
+.airline-logo {
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;           /* اختیاری – اگر لوگو گوشه‌دار باشد */
+    width: 70px;                   /* اندازه لوگو – خودتان تنظیم کنید */
+    height: 70px;
+    background: rgba(255, 255, 255, 0.06);  /* زمینه خیلی ملایم */
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.airline-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.5s ease;
+}
+
+/* لایه درخشش مورب متحرک */
+.airline-logo::before {
+    content: "";
+    position: absolute;
+    inset: -100% 0 -100% -200%;     /* شروع از چپ خارج از کادر */
+    background: linear-gradient(
+        135deg,                     /* زاویه ۴۵ درجه – از بالا-چپ به پایین-راست */
+        transparent 0%,
+        rgba(255, 255, 255, 0.0) 30%,
+        rgba(255, 255, 255, 0.7) 50%,    /* نقطه اوج درخشش */
+        rgba(255, 255, 255, 0.25) 70%,
+        transparent 100%
+    );
+    transform: skewX(-20deg) translateX(-100%);  /* کمی کج برای طبیعی‌تر شدن حرکت */
+    transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+    opacity: 0;
+}
+
+.flight-card:hover .airline-logo::before {
+    opacity: 1;
+    transform: skewX(-20deg) translateX(180%);   /* حرکت از چپ به راست کامل */
+}
+
+/* افکت اضافی هنگام هاور (اختیاری اما جذاب) */
+.flight-card:hover .airline-logo {
+    transform: scale(1.10) translateY(-3px);
+    box-shadow: 0 10px 25px rgba(120, 140, 255, 0.28);
+}
+
+.flight-card:hover .airline-logo img {
+    transform: scale(1.06);
+}
+
+.flight-route-animation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 440px;           /* کمی پهن‌تر برای تناسب بهتر */
+    position: relative;
+    margin: 0 20px;
+}
+
+.city {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #e0e0ff;
+    min-width: 110px;
+    text-align: center;
+    white-space: nowrap;
+    letter-spacing: 0.5px;
+    opacity: 0.95;
+}
+
+.origin {
+    text-align: right;
+    color: #c084fc;
+}
+
+.destination {
+    text-align: left;
+    color: #a78bfa;
+}
+
+.animation-container {
+    flex: 1;
+    height: 60px;               /* فضای بیشتر برای آیکون بزرگ‌تر */
+    position: relative;
+    overflow: hidden;
+}
+
+.plane-wrapper {
+    position: absolute;
+    right: -100px;              /* شروع از راست (خارج کادر) */
+    top: 50%;
+    transform: translateY(-50%);
+    animation: fly-right-to-left 6.5s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+}
+
+.plane {
+    font-size: 3.2rem;          /* بزرگ و چشم‌نواز */
+    color: #d1c4e9;             /* بنفش روشن و لاکچری */
+    text-shadow: 
+        0 0 15px rgba(209, 196, 233, 0.8),
+        0 6px 20px rgba(0, 0, 0, 0.45);
+    transform: rotate(-18deg);  /* زاویه طبیعی‌تر برای takeoff */
+    transition: all 0.4s ease;
+}
+
+/* انیمیشن پرواز از راست به چپ (مبدا → مقصد) */
+@keyframes fly-right-to-left {
+    0% {
+        right: -100px;
+        transform: translateY(-50%) rotate(-18deg) scale(1);
+    }
+    15% {
+        right: 5%;
+        transform: translateY(-65%) rotate(-25deg) scale(1.05);  /* اوج گرفتن */
+    }
+    45% {
+        right: 45%;
+        transform: translateY(-35%) rotate(-8deg) scale(1.08);   /* پرواز صاف و کمی بزرگ‌تر */
+    }
+    75% {
+        right: 85%;
+        transform: translateY(-55%) rotate(-20deg) scale(1.03);  /* شروع فرود ملایم */
+    }
+    100% {
+        right: 130%;                /* کامل خارج از سمت چپ */
+        transform: translateY(-50%) rotate(-18deg) scale(1);
+    }
+}
+
+/* ردپای ظریف (trail) – برای حس حرکت بیشتر */
+.plane-wrapper::after {
+    content: "••••••••";
+    position: absolute;
+    right: 100%;
+    top: 55%;
+    transform: translateY(-50%);
+    color: rgba(209, 196, 233, 0.28);
+    font-size: 2.2rem;
+    letter-spacing: -10px;
+    white-space: nowrap;
+    animation: trail-fade 6.5s linear infinite;
+    opacity: 0;
+}
+
+@keyframes trail-fade {
+    0%, 10%   { opacity: 0; }
+    20%, 80%  { opacity: 0.65; }
+    100%      { opacity: 0; }
+}
+
+/* افکت هاور: هواپیما درخشان‌تر و سریع‌تر */
+.flight-card:hover .plane {
+    color: #ede7f6;
+    text-shadow: 0 0 25px rgba(237, 231, 246, 1);
+    animation-duration: 5.2s;     /* سریع‌تر موقع هاور */
+}
+
+/* موبایل – کوچکتر و ساده‌تر */
+@media (max-width: 680px) {
+    .flight-route-animation {
+        max-width: 360px;
+    }
+    .plane {
+        font-size: 2.6rem;
+    }
+    .animation-container {
+        height: 48px;
+    }
+    @keyframes fly-right-to-left {
+        0%   { right: -80px; }
+        100% { right: 120%; }
+    }
+}
+
+
+
+
+.material-icons {
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;          /* اندازه دلخواه */
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+.plane {
+    font-size: 3.2rem !important;   /* اندازه بزرگ‌تر برای انیمیشن */
+    color: #d1c4e9;
+    text-shadow: 0 0 15px rgba(209, 196, 233, 0.8);
+}
 

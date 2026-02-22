@@ -3,7 +3,7 @@ import requests
 from datetime import datetime
 import jdatetime
 
-def get_sepehr_flights(origin='THR', destination='MHD', departure_date='2025-12-25'):
+def get_sepehr_flights(origin='THR', destination='MHD', departure_date='2026-03-25'):
     session = requests.Session()
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
@@ -48,6 +48,7 @@ def get_sepehr_flights(origin='THR', destination='MHD', departure_date='2025-12-
         class_flight = parvaz['cabinType']
         flight_number = parvaz['cleanFlightNumber']
         airline = parvaz['airlineNameFa']
+        airline_iata_code = parvaz['airlineIataCode']
 
         for item in parvaz.get('radifParvaziEntekhabForoshandeList', []):
             key = 'parvazCharteri' if item.get('parvazCharteri') else 'parvazWebservice' if item.get('parvazWebservice') else None
@@ -68,6 +69,7 @@ def get_sepehr_flights(origin='THR', destination='MHD', departure_date='2025-12-
                 'arrival_time': f"{departure_date} {hour}",  # تقریبی – بعداً دقیق می‌کنیم
                 'flight_number': flight_number,
                 'airline': airline,
+                'airline_iata_code': airline_iata_code,
                 'aircraft_type': 'نامشخص',  # سپهر نداره
                 'price_per_seat': price,
                 'available_seats': available_seats,

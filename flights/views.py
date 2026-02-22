@@ -6,7 +6,7 @@ from common.models import City
 from django.shortcuts import render
 from datetime import datetime
 from django.http import JsonResponse
-from common.models import City
+import pytz
 
 
 class LandingView(TemplateView):
@@ -27,36 +27,106 @@ class HomeView(TemplateView):
         context['latest_flights'] = Flight.objects.filter(status='active')[:5]
         return context
     
+# class FlightListView(ListView):
+#     template_name = 'flights/flights_list.html'
+#     context_object_name = 'object_list'
+
+#     def get_queryset(self):
+#         flights = []
+
+#         # پارامترهای جستجو از فرم
+#         origin_code = self.request.GET.get('origin')  # مثلاً THR
+#         destination_code = self.request.GET.get('destination')  # مثلاً MHD
+#         departure_date_str = self.request.GET.get('departure_date')  # مثلاً 2025-12-31
+
+#         # فیلتر پروازهای داخلی از دیتابیس خودمون
+#         db_flights = Flight.objects.select_related('airline', 'origin', 'destination')
+
+#         if origin_code:
+#             db_flights = db_flights.filter(Q(origin__iata_code__iexact=origin_code) | Q(origin__name_en__iexact=origin_code))
+#         if destination_code:
+#             db_flights = db_flights.filter(Q(destination__iata_code__iexact=destination_code) | Q(destination__name_en__iexact=destination_code))
+#         if departure_date_str:
+#             try:
+#                 departure_date = datetime.strptime(departure_date_str, '%Y-%m-%d').date()
+#                 db_flights = db_flights.filter(departure_time__date=departure_date)
+#             except ValueError:
+#                 pass  # اگر تاریخ نامعتبر بود، نادیده بگیر
+
+#         db_flights = db_flights.order_by('departure_time')
+
+#         for flight in db_flights:
+#             flights.append({
+#                 'id': flight.id,
+#                 'origin_city': flight.origin.name,
+#                 'destination_city': flight.destination.name,
+#                 'departure_time': flight.departure_time.strftime('%Y-%m-%d %H:%M'),
+#                 'arrival_time': flight.arrival_time.strftime('%Y-%m-%d %H:%M'),
+#                 'flight_number': flight.flight_number,
+#                 'airline': flight.airline.name if flight.airline else 'نامشخص',
+#                 'airline_name_en': flight.airline.name_en if flight.airline else '',
+#                 'airline_iata': flight.airline.iata_code if flight.airline else '',
+#                 'airline_logo': flight.airline.logo.url if flight.airline and flight.airline.logo else None,
+#                 'aircraft_type': flight.aircraft_type or 'نامشخص',
+#                 'price_per_seat': int(flight.price_per_seat),
+#                 'available_seats': flight.available_seats,
+#                 'source': 'internal',
+#                 'is_internal': True,
+#             })
+
+#         # اگر بخوای بعداً پروازهای سپهر رو هم اضافه کنی، اینجا اضافه می‌شه
+
+#         return flights
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['total_passengers'] = int(self.request.GET.get('total_passengers', 1))
+#         # برای نمایش دوباره در فرم جستجو (اگر لازم بود)
+#         context['search_origin'] = self.request.GET.get('origin', '')
+#         context['search_destination'] = self.request.GET.get('destination', '')
+#         context['search_departure_date'] = self.request.GET.get('departure_date', '')
+#         return context
+
 class FlightListView(ListView):
     template_name = 'flights/flights_list.html'
     context_object_name = 'object_list'
 
     def get_queryset(self):
-        flights = []
+        combined_flights = []
 
-        # پارامترهای جستجو از فرم
-        origin_code = self.request.GET.get('origin')  # مثلاً THR
-        destination_code = self.request.GET.get('destination')  # مثلاً MHD
-        departure_date_str = self.request.GET.get('departure_date')  # مثلاً 2025-12-31
+        # ── پارامترهای جستجو ────────────────────────────────────────
+        origin_code = self.request.GET.get('origin', '').strip().upper()
+        destination_code = self.request.GET.get('destination', '').strip().upper()
+        departure_date_str = self.request.GET.get('departure_date', '').strip()
 
-        # فیلتر پروازهای داخلی از دیتابیس خودمون
+        # اگر پارامترهای اصلی وجود نداشته باشند، لیست خالی برگردان
+        if not (origin_code and destination_code and departure_date_str):
+            return combined_flights
+
+        # ── ۱. پروازهای داخلی از دیتابیس ─────────────────────────────
         db_flights = Flight.objects.select_related('airline', 'origin', 'destination')
 
         if origin_code:
-            db_flights = db_flights.filter(Q(origin__iata_code__iexact=origin_code) | Q(origin__name_en__iexact=origin_code))
+            db_flights = db_flights.filter(
+                Q(origin__iata_code__iexact=origin_code) |
+                Q(origin__name_en__iexact=origin_code)
+            )
         if destination_code:
-            db_flights = db_flights.filter(Q(destination__iata_code__iexact=destination_code) | Q(destination__name_en__iexact=destination_code))
+            db_flights = db_flights.filter(
+                Q(destination__iata_code__iexact=destination_code) |
+                Q(destination__name_en__iexact=destination_code)
+            )
         if departure_date_str:
             try:
-                departure_date = datetime.strptime(departure_date_str, '%Y-%m-%d').date()
-                db_flights = db_flights.filter(departure_time__date=departure_date)
+                dep_date = datetime.strptime(departure_date_str, '%Y-%m-%d').date()
+                db_flights = db_flights.filter(departure_time__date=dep_date)
             except ValueError:
-                pass  # اگر تاریخ نامعتبر بود، نادیده بگیر
+                pass
 
         db_flights = db_flights.order_by('departure_time')
 
         for flight in db_flights:
-            flights.append({
+            combined_flights.append({
                 'id': flight.id,
                 'origin_city': flight.origin.name,
                 'destination_city': flight.destination.name,
@@ -64,24 +134,54 @@ class FlightListView(ListView):
                 'arrival_time': flight.arrival_time.strftime('%Y-%m-%d %H:%M'),
                 'flight_number': flight.flight_number,
                 'airline': flight.airline.name if flight.airline else 'نامشخص',
-                'airline_name_en': flight.airline.name_en if flight.airline else '',
                 'airline_iata': flight.airline.iata_code if flight.airline else '',
-                'airline_logo': flight.airline.logo.url if flight.airline and flight.airline.logo else None,
                 'aircraft_type': flight.aircraft_type or 'نامشخص',
                 'price_per_seat': int(flight.price_per_seat),
                 'available_seats': flight.available_seats,
-                'source': 'internal',
+                'class_type': getattr(flight, 'class_type', 'اکونومی'),
                 'is_internal': True,
+                'source': 'internal',
             })
 
-        # اگر بخوای بعداً پروازهای سپهر رو هم اضافه کنی، اینجا اضافه می‌شه
+        # ── ۲. پروازهای سپهر ۳۶۰ ─────────────────────────────────────
+        try:
+            sepehr_flights = get_sepehr_flights(
+                origin=origin_code,
+                destination=destination_code,
+                departure_date=departure_date_str
+            )
 
-        return flights
+            for f in sepehr_flights:
+                # هماهنگ‌سازی با ساختار داخلی
+                combined_flights.append({
+                    'id': None,                     # چون از API است، id ندارد
+                    'origin_city': f['origin_city'],
+                    'destination_city': f['destination_city'],
+                    'departure_time': f['departure_time'],
+                    'arrival_time': f['arrival_time'],
+                    'flight_number': f['flight_number'],
+                    'airline': f['airline'],
+                    'airline_iata': f['airline_iata_code'],             # اگر API کد IATA می‌دهد، اینجا بگذار
+                    'aircraft_type': f.get('aircraft_type', 'نامشخص'),
+                    'price_per_seat': f['price_per_seat'],
+                    'available_seats': f['available_seats'],
+                    'class_type': f.get('class_type', 'اکونومی'),
+                    'is_internal': False,
+                    'source': 'sepehr360',
+                })
+        except Exception as e:
+            # در محیط واقعی بهتر است log شود
+            print(f"خطا در دریافت پروازهای سپهر: {e}")
+
+        # ── مرتب‌سازی کلی (اختیاری) ────────────────────────────────
+        # می‌توانید بر اساس قیمت یا زمان مرتب کنید
+        combined_flights.sort(key=lambda x: x['price_per_seat'])
+
+        return combined_flights
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['total_passengers'] = int(self.request.GET.get('total_passengers', 1))
-        # برای نمایش دوباره در فرم جستجو (اگر لازم بود)
         context['search_origin'] = self.request.GET.get('origin', '')
         context['search_destination'] = self.request.GET.get('destination', '')
         context['search_departure_date'] = self.request.GET.get('departure_date', '')

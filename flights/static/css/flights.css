@@ -1,383 +1,360 @@
-.results-container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-.results-header {
-    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-    color: white;
-    padding: 50px 20px;
-    text-align: center;
-    border-radius: 15px;
-    margin-bottom: 40px;
+/* تم کلی */
+body {
+    background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 100%);
+    color: #e0e0ff;
+    font-family: 'Vazirmatn', system-ui, sans-serif;
 }
-.results-header h1 { font-size: 2.8em; margin-bottom: 10px; }
-.results-header p { font-size: 1.3em; opacity: 0.95; }
-.flight-card {
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-    margin-bottom: 24px;
-    overflow: hidden;
-    transition: all 0.3s ease;
+
+/* =============================================
+   هدر Glassmorphism + ثابت
+   ============================================= */
+
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    height: 75px;                    /* ارتفاع هدر – می‌توانید تغییر دهید */
+    background: rgba(12, 12, 28, 0.32);
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    border-bottom: 1px solid rgba(100, 110, 180, 0.18);
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.4);
+    transition: background 0.4s ease, backdrop-filter 0.4s ease;
 }
-.flight-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+
+header.scrolled {
+    /* وقتی کمی اسکرول شد → کمی مات‌تر و شیک‌تر (اختیاری) */
+    background: rgba(8, 8, 22, 0.48);
+    backdrop-filter: blur(20px) saturate(180%);
 }
-.flight-main {
-    display: flex;
-    align-items: center;
-    padding: 24px;
-    gap: 30px;
-}
-.airline-logo {
-    width: 60px;
-    height: 60px;
-    border-radius: 12px;
-    overflow: hidden;
-    border: 2px solid #eee;
-}
-.airline-logo img {
-    width: 100%;
+
+/* مرکز محتوا */
+.header-content {
+    max-width: 1180px;
+    margin: 0 auto;
     height: 100%;
-    object-fit: contain;
-}
-.flight-times {
+    padding: 0 25px;
     display: flex;
     align-items: center;
-    gap: 20px;
-    flex: 1;
+    justify-content: space-between;
 }
-.time-block {
-    text-align: center;
-}
-.time-big {
-    font-size: 2.2em;
-    font-weight: bold;
-    color: #333;
-}
-.city-name {
-    font-size: 1.1em;
-    color: #666;
-    margin-top: 4px;
-}
-.duration-arrow {
-    text-align: center;
-    flex: 1;
-}
-.duration-arrow i {
-    font-size: 2em;
-    color: #2a5298;
-}
-.duration-text {
-    color: #666;
-    font-size: 0.95em;
-    margin-top: 8px;
-}
-.flight-tags {
+
+/* لوگو */
+.logo {
     display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-top: 12px;
+    align-items: center;
+    gap: 10px;
+    color: #e0e0ff;
+    font-size: 1.45rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: color 0.3s ease;
 }
-.tag {
-    background: #f0f0f0;
-    color: #666;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.85em;
+
+.logo i {
+    font-size: 1.6rem;
+    color: #8b5cf6;               /* رنگ آیکون هواپیما – می‌توانید تغییر دهید */
 }
-.flight-action {
-    text-align: center;
-    padding: 20px 24px;
-    border-top: 1px solid #eee;
-    background: #f9f9f9;
+
+.logo:hover {
+    color: #c4b5fd;
 }
-.price-big {
-    font-size: 2em;
-    font-weight: bold;
-    color: #2a5298;
-    margin-bottom: 8px;
-}
-.seats-left {
-    font-size: 0.95em;
-    margin-bottom: 15px;
-}
-.seats-left.warning {
-    color: #e74c3c;
-    font-weight: bold;
-}
-.select-btn {
-    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-    color: white;
-    border: none;
-    padding: 14px 32px;
-    border-radius: 10px;
-    font-size: 1.1em;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-.select-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(42,82,152,0.3);
-}
-.tabs {
+
+/* منو / لینک‌ها */
+nav {
     display: flex;
-    background: #f0f0f0;
-    border-top: 1px solid #ddd;
+    align-items: center;
+    gap: 28px;
 }
-.tab {
-    flex: 1;
-    text-align: center;
-    padding: 12px;
-    color: #666;
-    font-size: 0.95em;
-    cursor: pointer;
-    transition: all 0.3s;
+
+nav a {
+    color: #d0d0ff;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1.05rem;
+    transition: all 0.28s ease;
+    padding: 6px 12px;
+    border-radius: 8px;
 }
-.tab:hover {
-    background: #e8e8e8;
-    color: #2a5298;
+
+nav a:hover {
+    color: #e0e0ff;
+    background: rgba(100, 100, 180, 0.15);
 }
-.no-results {
-    text-align: center;
-    padding: 100px 20px;
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+
+/* دکمه‌های ورود / عضویت / خروج */
+nav a[style*="background"] {
+    transition: all 0.3s ease;
+    border: 1px solid rgba(180, 180, 255, 0.15);
 }
-.no-results i { font-size: 5em; color: #ddd; margin-bottom: 20px; }
+
+nav a[style*="background"]:hover {
+    background: rgba(140, 140, 220, 0.35) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(100, 100, 180, 0.25);
+}
+
+/* نام کاربری */
+nav span {
+    color: #c4b5fd;
+    font-weight: 500;
+}
+
+/* فضای خالی زیر هدر برای جلوگیری از روی‌هم‌افتادن */
+body {
+    padding-top: 75px;               /* دقیقاً برابر با height هدر */
+    /* اگر هدر شما responsive است و ارتفاعش تغییر می‌کند، از min-height یا js استفاده کنید */
+}
+
+/* در صفحه لیست پروازها – برای اطمینان */
+.results-container {
+    padding-top: 20px;               /* فاصله اضافی از هدر */
+}
+
+.results-container {
+    max-width: 1180px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+/* کارت پرواز */
 .flight-card {
-background: white;
-border-radius: 16px;
-box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-margin-bottom: 24px;
-overflow: hidden;
-transition: all 0.3s ease;
+    background: rgba(30, 30, 60, 0.28);
+    backdrop-filter: blur(16px) saturate(140%);
+    border: 1px solid rgba(120, 120, 180, 0.18);
+    border-radius: 20px;
+    margin-bottom: 28px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+    transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+    overflow: hidden;
 }
+
 .flight-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    transform: translateY(-12px) scale(1.015);
+    box-shadow: 0 24px 48px rgba(0,0,0,0.6),
+                0 0 30px rgba(100,150,255,0.12);
+    border-color: rgba(140,160,255,0.35);
 }
-.flight-header {
+
+/* ردیف اصلی کارت */
+.flight-main-row {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    padding: 24px;
-    gap: 40px;
-    border-bottom: 1px solid #eee;
+    padding: 24px 28px;
+    gap: 32px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
 }
+
+/* بخش چپ: لوگو + مسیر */
 .flight-details-section {
     display: flex;
     align-items: center;
-    gap: 30px;
+    gap: 32px;
     flex: 1;
-    min-width: 0; /* برای جلوگیری از overflow */
+    min-width: 0;
 }
+
+.airline-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    min-width: 80px;
+}
+
 .airline-logo {
-    width: 70px;
-    height: 70px;
+    width: 64px;
+    height: 64px;
     border-radius: 12px;
     overflow: hidden;
-    border: 2px solid #eee;
-    flex-shrink: 0;
+    background: rgba(255,255,255,0.06);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
 }
+
 .airline-logo img {
     width: 100%;
     height: 100%;
     object-fit: contain;
 }
-.flight-times {
+
+.airline-name {
+    font-size: 0.9rem;
+    color: #b0b0e0;
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* مسیر پرواز */
+.flight-path {
+    direction: rtl;
     display: flex;
     align-items: center;
-    gap: 30px;
+    gap: 16px;
     flex: 1;
 }
-.time-block {
+
+.departure-block, .arrival-block {
     text-align: center;
-    min-width: 100px;
+    min-width: 90px;
 }
-.time-big {
-    font-size: 2.2em;
-    font-weight: bold;
-    color: #333;
+
+.departure-time, .arrival-time {
+    font-size: 2.1rem;
+    font-weight: 700;
+    color: #f0f0ff;
 }
-.city-name {
-    font-size: 1.1em;
-    color: #666;
+
+.origin-city, .destination-city {
+    font-size: 0.95rem;
+    color: #a0a0d0;
     margin-top: 4px;
 }
-.duration-arrow {
-    text-align: center;
-    flex: 1;
-}
-.duration-arrow i {
-    font-size: 2em;
-    color: #2a5298;
-}
-.duration-text {
-    color: #666;
-    font-size: 0.95em;
-    margin-top: 8px;
-}
-.flight-tags-container {
-    flex: 1;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-}
-.flight-tags {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-.tag {
-    background: #f0f0f0;
-    color: #666;
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 0.9em;
-}
-.flight-price-section {
-    text-align: center;
-    min-width: 220px;
-    flex-shrink: 0;
-}
-.price-big {
-    font-size: 2.2em;
-    font-weight: bold;
-    color: #2a5298;
-    margin-bottom: 10px;
-}
-.seats-left {
-    font-size: 1em;
-    margin-bottom: 20px;
-    color: #666;
-}
-.seats-left.warning {
-    color: #e74c3c;
-    font-weight: bold;
-}
-.select-btn {
-    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-    color: white;
-    border: none;
-    padding: 14px 36px;
-    border-radius: 10px;
-    font-size: 1.1em;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-.select-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(42,82,152,0.3);
-}
-.tabs {
-    display: flex;
-    background: #f9f9f9;
-}
-.tab {
-    flex: 1;
-    text-align: center;
-    padding: 14px;
-    color: #666;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s;
-    border-right: 1px solid #eee;
-}
-.tab:last-child { border-right: none; }
-.tab:hover {
-    background: #e8e8e8;
-    color: #2a5298;
-}
 
-.tabs {
+.path-indicator {
     display: flex;
-    background: #f0f0f0;
-    border-top: 1px solid #ddd;
-}
-.tab {
+    align-items: center;
     flex: 1;
-    text-align: center;
-    padding: 16px;
-    color: #666;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s;
+    min-width: 140px;
     position: relative;
 }
-/* .tab.active {
-    background: white;
-    color: #2a5298;
-    border-bottom: 3px solid #2a5298;
-} */
-.tab:hover {
-    background: #e8e8e8;
-}
-/* .tab-icon {
-    margin-left: 8px;
-    transition: transform 0.3s;
-} */
-.tab.active .tab-icon {
-    transform: rotate(180deg);
+
+.path-plane {
+    font-size: 1.6rem;
+    color: #9b8aff;
+    transform: rotate(180deg); /* نوک به چپ */
+    z-index: 2;
 }
 
-/* .tab-content {
-    background: white;
-    border-top: 1px solid #eee;
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.4s ease;
+.path-line {
+    height: 2px;
+    background: linear-gradient(to left, rgba(155,140,255,0.7), rgba(155,140,255,0.2));
+    flex: 1;
+    margin: 0 10px;
 }
-.tab-content.open {
-    max-height: 500px; /* کافی برای محتوای ما } */
+
+.path-circle {
+    width: 10px;
+    height: 10px;
+    border: 2px solid #9b8aff;
+    border-radius: 50%;
+    background: transparent;
+    z-index: 2;
+}
+
+/* بخش قیمت */
+.flight-price-section {
+    text-align: right;
+    min-width: 220px;
+}
+
+.price-big {
+    font-size: 2.4rem;
+    font-weight: 800;
+    background: linear-gradient(90deg, #c084fc, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.currency {
+    font-size: 1.1rem;
+    color: #d0d0ff;
+    margin-right: 6px;
+}
+
+.seats-left {
+    font-size: 0.95rem;
+    margin: 8px 0;
+    color: #a0ffa0;
+}
+
+.seats-left.warning {
+    color: #ffaaaa;
+}
+
+/* دکمه‌ها */
+.select-btn {
+    display: inline-block;
+    padding: 12px 32px;
+    border-radius: 50px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    margin-top: 12px;
+}
+
+.select-btn.primary {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+}
+
+.select-btn.external {
+    background: linear-gradient(135deg, #f59e0b, #ea580c);
+    color: white;
+}
+
+.select-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(99,102,241,0.45);
+}
+
+/* تب‌ها */
+.tabs {
+    display: flex;
+    background: rgba(20,20,50,0.4);
+    border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.tab {
+    flex: 1;
+    padding: 16px;
+    text-align: center;
+    color: #b0b0e0;
+    cursor: pointer;
+    transition: all 0.25s;
+}
+
+.tab:hover, .tab.active {
+    color: #d0d0ff;
+    background: rgba(50,50,90,0.35);
+}
 
 .tab-content {
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.4s ease;
-    background: #fdfdfd;
+    transition: max-height 0.4s ease, padding 0.4s ease;
+    background: rgba(25,25,55,0.25);
 }
+
 .tab-content.open {
-    max-height: 400px; /* کافی برای محتوا */
+    max-height: 500px;
+    padding: 20px 28px;
 }
 
-.tab.active .tab-icon {
-    transform: rotate(180deg);
-}
-
-.tab-panel {
-    padding: 20px 30px;
-    color: #444;
-    line-height: 1.8;
-}
-.tab-panel ul {
-    padding-right: 20px;
-}
-.tab-panel li {
-    margin-bottom: 8px;
-}
-
-
-/* Responsive - موبایل */
-@media (max-width: 992px) {
-    .flight-header {
+/* موبایل */
+@media (max-width: 768px) {
+    .flight-main-row {
         flex-direction: column;
-        gap: 20px;
-        text-align: center;
+        align-items: stretch;
+        gap: 24px;
     }
+
+    .flight-price-section {
+        text-align: center;
+        width: 100%;
+    }
+
     .flight-details-section {
         flex-direction: column;
+        align-items: center;
         gap: 20px;
     }
-    .flight-times {
-        justify-content: center;
+
+    .flight-path {
+        width: 100%;
+        justify-content: space-between;
     }
-    .flight-tags-container {
-        justify-content: center;
-    }
-}
-@media (max-width: 992px) {
-    .flight-main { flex-direction: column; gap: 20px; text-align: center; }
-    .flight-times { justify-content: center; }
-    .flight-action { border-top: none; padding-top: 0; }
 }
