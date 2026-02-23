@@ -203,7 +203,7 @@ video {
 }
 
 .section:hover .overlay {
-    background: rgba(15,32,39,0.55);
+    background: rgba(15,32,39,0.25);
 }
 
 .section-content {

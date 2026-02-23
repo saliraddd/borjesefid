@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>کد تایید</h2>
+<p>کد ۶ رقمی ارسال شده به {{ phone }} را وارد کنید</p>
+<form method="post">
+    {% csrf_token %}
+    <input type="text" name="otp" placeholder="کد تایید" maxlength="6" required>
+    <button type="submit">تایید</button>
+</form>
+{% if error %}<p style="color:red;">{{ error }}</p>{% endif %}
+{% endblock %}

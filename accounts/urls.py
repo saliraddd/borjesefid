@@ -9,13 +9,15 @@ from .dashboard_views import (
 app_name = 'accounts'
 
 urlpatterns = [
+    # احراز هویت
     path('login/', views.login_view, name='login'),
-    path('signup/', views.signup_view, name='signup'),
+    path('verify-otp/', views.verify_otp, name='verify_otp'),
+    path('signup/customer/', views.customer_signup, name='signup_customer'),
+    path('signup/agency/', views.agency_signup, name='signup_agency'),
     path('logout/', views.logout_view, name='logout'),
+
+    # داشبورد (اگر هنوز داری)
     path('dashboard/', dashboard, name='dashboard'),
     path('dashboard/transactions/', dashboard_transactions, name='transactions'),
-    path('dashboard/bookings/', dashboard_bookings, name='bookings'),
-    path('dashboard/profile/', dashboard_profile, name='profile'),
-    path('dashboard/charge/', charge_credit, name='charge'),
-    path('dashboard/withdrawal/', withdrawal_request, name='withdrawal'),
+    # ... بقیه مسیرهای داشبورد
 ]

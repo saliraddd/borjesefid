@@ -7,7 +7,7 @@
     <!-- Dashboard Header -->
     <div style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; padding: 25px; border-radius: 12px; margin-bottom: 30px;">
         <h1 style="margin: 0 0 10px 0; font-size: 2em;">داشبورد کاربری</h1>
-        <p style="margin: 0; opacity: 0.9;">خوش‌آمدید، {{ user.first_name|default:user.username }}</p>
+        <p style="margin: 0; opacity: 0.9;">خوش‌آمدید، {{ user.display_name }}</p>
     </div>
 
     <div style="display: grid; grid-template-columns: 250px 1fr; gap: 20px;">
@@ -107,7 +107,7 @@
                         </div>
                         <div>
                             <label style="display: block; color: #666; font-weight: 600; margin-bottom: 8px;">نام کاربری</label>
-                            <p style="margin: 0; color: #333;">{{ user.username }}</p>
+                            <p style="margin: 0; color: #333;">{{ user.display_name }}</p>
                         </div>
                         <div>
                             <label style="display: block; color: #666; font-weight: 600; margin-bottom: 8px;">ایمیل</label>
