@@ -1,11 +1,39 @@
-{% extends 'base.html' %}
-{% block content %}
-<h2>کد تایید</h2>
-<p>کد ۶ رقمی ارسال شده به {{ phone }} را وارد کنید</p>
-<form method="post">
+{% extends 'accounts/base_auth.html' %}
+
+{% block auth_content %}
+  <h4 class="text-center mb-4">تایید کد ارسالی</h4>
+
+  <p class="text-center text-muted mb-4">
+    کد ۶ رقمی به شماره <strong>{{ phone|default:"—" }}</strong> ارسال شد
+  </p>
+
+  {% if error %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      {{ error }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  {% endif %}
+
+  <form method="post" novalidate>
     {% csrf_token %}
-    <input type="text" name="otp" placeholder="کد تایید" maxlength="6" required>
-    <button type="submit">تایید</button>
-</form>
-{% if error %}<p style="color:red;">{{ error }}</p>{% endif %}
+
+    <div class="form-group">
+      <input type="text" name="otp" id="otp" class="form-control text-center fs-4" 
+             maxlength="6" pattern="\d{6}" inputmode="numeric" 
+             autocomplete="one-time-code" required autofocus placeholder=" " />
+      <label for="otp">کد تایید</label>
+    </div>
+
+    <button type="submit" class="btn-primary">تایید و ورود</button>
+  </form>
+
+  <div class="text-center mt-4">
+    <p class="small text-muted">
+      کد دریافت نکردید؟ 
+      <a href="{% url 'accounts:login' %}" class="auth-link">ارسال مجدد کد</a>
+    </p>
+    <p class="small text-muted mt-2">
+      کد تا ۳ دقیقه معتبر است.
+    </p>
+  </div>
 {% endblock %}

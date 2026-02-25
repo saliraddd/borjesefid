@@ -1,0 +1,68 @@
+{% extends 'accounts/base_auth.html' %}
+
+{% block auth_content %}
+  <h4 class="text-center mb-4">ثبت‌نام آژانس مسافرتی</h4>
+  <p class="text-center text-muted mb-4">
+    لطفاً اطلاعات دقیق را وارد کنید. پس از بررسی مدارک توسط تیم پشتیبانی، حساب شما فعال خواهد شد.
+  </p>
+
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      {{ form.non_field_errors }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  {% endif %}
+
+  <form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+
+    <!-- شماره موبایل -->
+    <div class="form-group">
+      {{ form.phone_number }}
+      <label for="{{ form.phone_number.id_for_label }}">شماره موبایل</label>
+      {{ form.phone_number.errors }}
+    </div>
+
+    <!-- ایمیل -->
+    <div class="form-group">
+      {{ form.email }}
+      <label for="{{ form.email.id_for_label }}">ایمیل آژانس</label>
+      {{ form.email.errors }}
+    </div>
+
+    <!-- نام آژانس (اگر در فرم و مدل وجود دارد - در غیر این صورت این بخش را حذف کنید) -->
+    <!-- 
+    <div class="form-group">
+      {{ form.agency_name }}
+      <label for="{{ form.agency_name.id_for_label }}">نام کامل آژانس</label>
+      {{ form.agency_name.errors }}
+    </div>
+    -->
+
+    <!-- آپلود مجوز / پروانه فعالیت -->
+    <div class="form-group mb-4">
+      <label class="form-label d-block mb-2">مجوز فعالیت آژانس (pdf / jpg / png)</label>
+      {{ form.agency_license }}
+      {{ form.agency_license.errors }}
+      <div class="form-text text-muted mt-1">
+        حداکثر حجم مجاز: ۵ مگابایت<br>
+        فرمت‌های مجاز: PDF، JPG، JPEG، PNG
+      </div>
+    </div>
+
+    <!-- دکمه ارسال -->
+    <button type="submit" class="btn-primary">
+      ثبت درخواست و دریافت کد تأیید
+    </button>
+  </form>
+
+  <div class="text-center mt-5 small text-muted">
+    <p>
+      با ثبت‌نام، <a href="#" class="auth-link">شرایط و قوانین</a> سایت را می‌پذیرید.
+    </p>
+    <p class="mt-3">
+      حساب کاربری دارید؟ 
+      <a href="{% url 'accounts:login' %}" class="auth-link">ورود به پنل</a>
+    </p>
+  </div>
+{% endblock %}
